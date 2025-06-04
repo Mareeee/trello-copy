@@ -11,7 +11,7 @@
   border: 0.1em solid rgb(169, 169, 169);
 }
 
-input[type="text"],
+input[type="email"],
 input[type="password"],
 select {
   display: inline-block;
@@ -49,5 +49,5 @@ input[type="submit"]:hover {
 .login-href {
   text-decoration: none;
   font-weight: bold;
-  color: purple;
+  color: #03549a;
 }

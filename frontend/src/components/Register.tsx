@@ -5,15 +5,27 @@ import "./Register.css"
 function Register() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [repeatPassword, setRepeatPassword] = useState("");
+    const [error, setError] = useState("");
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+        setError("");
+
+        if (password !== repeatPassword) {
+            setError("Password does not match!");
+            return;
+        }
 
         try {
-            const result = await axios.get("/home")
-            alert(`server responded with: ${result.data}`)
+            const response = await axios.post("/api/users", {email, password});
+            alert(`Successfully registered with email: ${response.data['email']}`);
         } catch (e) {
-            alert(`something went wrong ${e}`)
+            if (axios.isAxiosError(error)) {
+                setError(error.response?.data?.message || "Registration failed.");
+            } else {
+                setError("An unexpected error occurred.");
+            }
         }
     }
 
@@ -23,16 +35,21 @@ function Register() {
 
                 <form name="registration" onSubmit={handleSubmit}>
                         <label>Email</label>
-                    <input type="text" placeholder="Enter your email address"/>
+                    <input type="email" placeholder="Enter your email address" value={email} onChange={(e) => setEmail(e.target.value)}/>
                         <label>Password</label>
-                    <input type="password" placeholder="Enter your password"/>
+                    <input type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                         <label>Repeat Password</label>
-                    <input type="password" placeholder="Repeat your password"/>
+                    <input type="password" placeholder="Repeat your password" value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)}/>
                     
                     <input type="submit" value="Register"/>
                 </form>
 
-                <div className="login"><p>Already have an account? </p><a className="login-href" href="#">Log in</a>  </div>
+                {error && <p>Error: <span style={{color: "red"}}>{error}</span></p>}
+
+                <div className="login">
+                    <p>Already have an account? </p>
+                    <a className="login-href" href="#">Log in</a>
+                </div>
         </div>
     )
 }
