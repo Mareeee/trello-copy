@@ -21,6 +21,7 @@ function Home() {
     }
 
     try {
+      console.log("HERERERE");
         axios.get('/api/users/me', {
             headers: { 'x-auth-token': token }
         });

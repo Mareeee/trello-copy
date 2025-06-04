@@ -22,7 +22,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
         return;
     }
 
-    const { user, error: addUserError } = addUser(req.body);
+    const { user, error: addUserError } = await addUser(req.body);
     if (addUserError) {
         res.status(400).send(addUserError);
         return;

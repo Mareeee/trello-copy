@@ -53,7 +53,7 @@ function Register({onSuccess, onSwitchToLogin} : RegisterProps ) {
 
             {error && <p>Error: <span style={{color: "red"}}>{error}</span></p>}
 
-            <div className="login">
+            <div className="login-register">
                 <p>Already have an account? </p>
                 <a className="login-href" onClick={onSwitchToLogin}>Log in</a>
             </div>

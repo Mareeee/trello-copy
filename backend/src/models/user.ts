@@ -1,6 +1,7 @@
-import jwt from "jsonwebtoken"
-import config from "config"
-import Joi from "joi"
+import jwt from "jsonwebtoken";
+import config from "config";
+import Joi from "joi";
+import bcrypt from "bcrypt";
 
 class User {
     id: number;
@@ -42,7 +43,7 @@ function validate(user) {
   return schema.validate(user);
 }
 
-function addUser(userData) {
+async function addUser(userData) {
   const { error } = validate(userData);
   if (error) return { error };
 
@@ -50,8 +51,24 @@ function addUser(userData) {
   if (existing) return { error: "User already registered." };
 
   const user = new User(userData);
+
+  const salt = await bcrypt.genSalt(10);
+  user.password =  await bcrypt.hash(user.password, salt);
+
   users.push(user);
   return { user };
+}
+
+function findOne(email) {
+  const user = users.find(u => u.email === email);
+
+  if (!user) {
+    new Error("Invalid email or password.");
+    console.log("User not found by that email");
+    return;
+  }
+
+  return user;
 }
 
 function findUser(id) {
@@ -65,4 +82,4 @@ function findUser(id) {
   return user;
 }
 
-export {User, validate, addUser, findUser};
+export {User, validate, addUser, findUser, findOne};
