@@ -2,7 +2,12 @@ import { useState } from "react";
 import axios from "axios"
 import "./Register.css"
 
-function Register() {
+type RegisterProps = {
+    onSuccess: () => void;
+    onSwitchToLogin: () => void;
+};
+
+function Register({onSuccess, onSwitchToLogin} : RegisterProps ) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
@@ -19,7 +24,9 @@ function Register() {
 
         try {
             const response = await axios.post("/api/users", {email, password});
-            alert(`Successfully registered with email: ${response.data['email']}`);
+            localStorage.setItem("token", response.headers['x-auth-token']);
+            console.log(`token: ${response.headers['x-auth-token']}`);
+            onSuccess();
         } catch (e) {
             if (axios.isAxiosError(error)) {
                 setError(error.response?.data?.message || "Registration failed.");
@@ -31,25 +38,25 @@ function Register() {
 
     return (
         <div className="registration">
-                <h2>Register Account</h2>
+            <h2>Register Account</h2>
 
-                <form name="registration" onSubmit={handleSubmit}>
-                        <label>Email</label>
-                    <input type="email" placeholder="Enter your email address" value={email} onChange={(e) => setEmail(e.target.value)}/>
-                        <label>Password</label>
-                    <input type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)}/>
-                        <label>Repeat Password</label>
-                    <input type="password" placeholder="Repeat your password" value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)}/>
-                    
-                    <input type="submit" value="Register"/>
-                </form>
+            <form name="registration" onSubmit={handleSubmit}>
+                    <label>Email</label>
+                <input type="email" placeholder="Enter your email address" value={email} onChange={(e) => setEmail(e.target.value)}/>
+                    <label>Password</label>
+                <input type="password" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)}/>
+                    <label>Repeat Password</label>
+                <input type="password" placeholder="Repeat your password" value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)}/>
+                
+                <input type="submit" value="Register"/>
+            </form>
 
-                {error && <p>Error: <span style={{color: "red"}}>{error}</span></p>}
+            {error && <p>Error: <span style={{color: "red"}}>{error}</span></p>}
 
-                <div className="login">
-                    <p>Already have an account? </p>
-                    <a className="login-href" href="#">Log in</a>
-                </div>
+            <div className="login">
+                <p>Already have an account? </p>
+                <a className="login-href" onClick={onSwitchToLogin}>Log in</a>
+            </div>
         </div>
     )
 }

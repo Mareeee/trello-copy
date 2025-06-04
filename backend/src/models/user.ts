@@ -18,7 +18,9 @@ class User {
     generateAuthToken() {
         const token = jwt.sign(
             { _id: this.id, isAdmin: this.isAdmin },
-            config.get("jwtPrivateKey")
+            config.get("jwtPrivateKey"), {
+              expiresIn: "1hr"
+            }
         );
 
         return token;
@@ -52,4 +54,15 @@ function addUser(userData) {
   return { user };
 }
 
-export {User, validate, addUser, users};
+function findUser(id) {
+  const user = users.find(u => u.id === id);
+
+  if (!user) {
+    new Error("User does not exist.");
+    return;
+  }
+
+  return user;
+}
+
+export {User, validate, addUser, findUser};
