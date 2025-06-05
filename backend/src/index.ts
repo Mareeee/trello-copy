@@ -1,12 +1,14 @@
 import express from "express";
 import setupRoutes from "./startup/routes.js";
 import env from "./startup/config.js";
+import { initDb } from "./db/postgres.js";
 import dotenv from "dotenv";
 
 try {
   dotenv.config();
 
   env();
+  await initDb();
 
   const app = express();
   setupRoutes(app);
