@@ -6,6 +6,10 @@ import Board from "../components/Board";
 import axios from "axios";
 import { STORAGE_KEYS } from "../constants/storageKeys";
 
+function logout() {
+  return;
+}
+
 function Home() {
   const [modal, setModal] = useState<"login" | "register" | null>(null);
 
@@ -15,21 +19,19 @@ function Home() {
 
   useEffect(() => {
     async function checkToken() {
-
-      const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-      
-      if (!token) {
-        setModal("register");
-        return;
-      }
-      
       try {
+        const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
+        
+        if (!token) {
+          setModal("register");
+          return;
+        }
+      
         await axios.get('/api/users/me', {
           headers: { 'x-auth-token': token }
         });
-      } catch (err) {
-        console.log("Invalid token.");
-        localStorage.removeItem('token');
+      } catch (e) {
+        logout();
       }
     }
 
