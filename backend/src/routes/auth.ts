@@ -3,11 +3,10 @@ const router = Router();
 
 router.post('/', async (req: Request, res: Response) => {
     const token = req.headers.authorization;
-
-    if (token) {
-
-    } else {
+    
+    if (!token) { 
         res.status(401).send("No token provided");
+        return;
     }
 })
 

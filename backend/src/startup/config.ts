@@ -1,7 +1,5 @@
-import config from 'config'
-
 export default function() {
-    if (!config.get('jwtPrivateKey')) {
+    if (!process.env.jwtPrivateKey) {
         throw new Error("FATAL ERROR: jwtPrivateKey is not defined.");
     }
 }

@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import config from "config";
 
 export default function (req: Request, res: Response, next: NextFunction) {
     const token = req.header('x-auth-token');
@@ -10,14 +9,15 @@ export default function (req: Request, res: Response, next: NextFunction) {
     }
 
     try {
-        const decoded = jwt.verify(token, config.get('jwtPrivateKey'));
+        const decoded = jwt.verify(token, process.env.jwtPrivateKey);
         req['user'] = decoded;
         next();
     } catch (ex: any) {
         if (ex.name === 'TokenExpiredError') {
             res.status(401).send('Token expired.');
-        } else {
-            res.status(400).send('Invalid token.');
         }
+
+        res.status(400).send('Invalid token.');
+        return;
     }
 };
