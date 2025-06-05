@@ -68,7 +68,6 @@ function findOne(email) {
 
   if (!user) {
     new Error("Invalid email or password.");
-    console.log("User not found by that email");
     return;
   }
 

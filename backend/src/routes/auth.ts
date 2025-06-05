@@ -2,7 +2,7 @@ import { Router, Request, Response } from 'express';
 const router = Router();
 import _ from "lodash";
 import bcrypt from "bcrypt";
-import {validate, findOne} from "../models/user.js";
+import {validate, findOne, generateAuthToken} from "../models/user.js";
 
 router.post('/', async (req: Request, res: Response): Promise<void> => {
     const { error } = validate(req.body);
@@ -23,7 +23,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
         return;
     }
 
-    const token = user.generateAuthToken();
+    const token = generateAuthToken(user);
     res.header("x-auth-token", token).send(_.pick(user, ["id", "email"]))
     console.log(`User logged in: ${user.email} (ID: ${user.id})`);
 })

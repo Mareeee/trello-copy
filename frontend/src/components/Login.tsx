@@ -7,6 +7,21 @@ type LoginProps = {
     onSwitchToRegister: () => void;
 }
 
+function validate(
+  email: string,
+  password: string,
+): string | null {
+  if (!email) return "Email required!";
+
+  if (!password) return "Password required!";
+
+  if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email)) {
+    return "Invalid email format! Example: something@email.com";
+  }
+
+  return null;
+}
+
 function Login({onSuccess, onSwitchToRegister}: LoginProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -16,14 +31,19 @@ function Login({onSuccess, onSwitchToRegister}: LoginProps) {
         event.preventDefault();
         setError("");
 
+        const validationError = validate(email, password);
+        if (validationError) {
+            setError(validationError);
+            return;
+        }
+
         try {
             const response = await axios.post("/api/auth", {email, password});
             localStorage.setItem("token", response.headers['x-auth-token']);
-            console.log(`token: ${response.headers['x-auth-token']}`);
             onSuccess();
         } catch (e) {
-            if (axios.isAxiosError(error)) {
-                setError(error.response?.data?.message || "Login failed.");
+            if (axios.isAxiosError(e)) {
+                setError(e.response?.data || "Login failed.");
             } else {
                 setError("An unexpected error occurred.");
             }
