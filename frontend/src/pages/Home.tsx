@@ -1,14 +1,11 @@
+import { STORAGE_KEYS } from "../constants/storageKeys";
 import { useEffect, useState } from "react";
+import { logout } from "../utils/logout";
 import Register from "../components/Register";
-import "./Home.css";
 import Login from "../components/Login";
 import Board from "../components/Board";
 import axios from "axios";
-import { STORAGE_KEYS } from "../constants/storageKeys";
-
-function logout() {
-  return;
-}
+import "./Home.css";
 
 function Home() {
   const [modal, setModal] = useState<"login" | "register" | null>(null);
@@ -21,22 +18,25 @@ function Home() {
     async function checkToken() {
       try {
         const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-        
+
         if (!token) {
-          setModal("register");
+          setModal("login");
           return;
         }
-      
-        await axios.get('/api/users/me', {
-          headers: { 'x-auth-token': token }
+
+        await axios.get("/api/users/me", {
+          headers: { "x-auth-token": token }
         });
       } catch (e) {
-        logout();
+        logout(
+          () => setModal("login"),
+          () => setModal("register")
+        );
       }
     }
 
     checkToken();
-  }, [])
+  }, []);
 
   return (
     <div className="home">
@@ -53,9 +53,12 @@ function Home() {
         />
       )}
 
-    {!modal && (
-        <Board/>
-    )}
+      {!modal && (
+        <Board
+          onSuccess={() => setModal("login")}
+          onSwitchToLogin={() => setModal("login")}
+        />
+      )}
     </div>
   );
 }
