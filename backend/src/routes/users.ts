@@ -2,9 +2,8 @@ import { Router, Request, Response } from 'express';
 const router = Router();
 import auth from "../middleware/auth.js"
 import _ from "lodash";
-import {validate, addUser, findUser} from "../models/user.js";
+import {validate, generateAuthToken, addUser, findUser} from "../models/user.js";
 
-// authenticating users jwt token
 router.get('/me', auth, async (req: Request, res: Response) => {
     try {
         const user = findUser(req['user']._id);
@@ -14,8 +13,7 @@ router.get('/me', auth, async (req: Request, res: Response) => {
     }
 })
 
-// validating user data and generating jwt token
-router.post('/', async (req: Request, res: Response): Promise<void> => {
+router.post('/', async (req: Request, res: Response) => {
     const { error } = validate(req.body);
     if (error) {
         res.status(400).send(error.details[0].message);
@@ -28,7 +26,7 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
         return;
     }
 
-    const token = user.generateAuthToken();
+    const token = generateAuthToken(user);
     res.header("x-auth-token", token).send(_.pick(user, ["id", "email"]))
     console.log(`User registered: ${user.email} (ID: ${user.id})`);
 })

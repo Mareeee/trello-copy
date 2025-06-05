@@ -1,40 +1,39 @@
 import jwt from "jsonwebtoken";
-import config from "config";
-import Joi from "joi";
 import bcrypt from "bcrypt";
+import Joi from "joi";
 
-class User {
-    id: number;
-    email: string;
-    password: string;
-    isAdmin: boolean;
+const users: any[] = [];
 
-    constructor({email, password, isAdmin = false}) {
-        this.id = User.generateId();
-        this.email = email;
-        this.password = password;
-        this.isAdmin = isAdmin;
-    }
-
-    generateAuthToken() {
-        const token = jwt.sign(
-            { _id: this.id, isAdmin: this.isAdmin },
-            config.get("jwtPrivateKey"), {
-              expiresIn: "1hr"
-            }
-        );
-
-        return token;
-    }
-    
-    static generateId() {
-        return users.length + 1;
-    }
+function generateAuthToken(user: { id: number; isAdmin: boolean }) {
+  return jwt.sign({ _id: user.id, isAdmin: user.isAdmin }, process.env.jwtPrivateKey, {
+    expiresIn: "1h"
+  });
 }
 
-const users = [];
+function generateId() {
+  return users.length + 1;
+}
 
-function validate(user) {
+function createUser({
+  email,
+  password,
+  isAdmin = false
+}: {
+  email: string;
+  password: string;
+  isAdmin?: boolean;
+}) {
+  const user = {
+    id: generateId(),
+    email,
+    password,
+    isAdmin
+  };
+
+  return user;
+}
+
+function validate(user: { email: string; password: string }) {
   const schema = Joi.object({
     email: Joi.string().required().email(),
     password: Joi.string().required()
@@ -43,14 +42,19 @@ function validate(user) {
   return schema.validate(user);
 }
 
-async function addUser(userData) {
+async function addUser(userData: {
+  email: string;
+  password: string;
+  isAdmin?: boolean;
+}) {
+
   const { error } = validate(userData);
   if (error) return { error };
 
-  const existing = users.find(u => u.email === userData.email);
+  const existing = users.find((u) => u.email === userData.email);
   if (existing) return { error: "User already registered." };
 
-  const user = new User(userData);
+  const user = createUser(userData);
 
   const salt = await bcrypt.genSalt(10);
   user.password =  await bcrypt.hash(user.password, salt);
@@ -71,15 +75,8 @@ function findOne(email) {
   return user;
 }
 
-function findUser(id) {
-  const user = users.find(u => u.id === id);
-
-  if (!user) {
-    new Error("User does not exist.");
-    return;
-  }
-
-  return user;
+function findUser(id: number) {
+  return users.find((u) => u.id === id) || null;
 }
 
-export {User, validate, addUser, findUser, findOne};
+export { createUser, validate, addUser, findUser, findOne, generateAuthToken };
