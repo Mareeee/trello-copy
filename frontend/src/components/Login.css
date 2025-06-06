@@ -1,4 +1,4 @@
-.registration {
+.login {
   max-width: 20em;
   display: flex;
   flex-direction: column;
@@ -38,7 +38,7 @@ input[type="submit"]:hover {
   background-color: #456ea0;
 }
 
-.login-register {
+.register-login {
   width: 100%;
   display: flex;
   align-items: center;
@@ -46,12 +46,12 @@ input[type="submit"]:hover {
   gap: 10px;
 }
 
-.login-href {
+.register-href {
   text-decoration: none;
   font-weight: bold;
   color: #03549a;
 }
 
-.login-href:hover {
+.register-href:hover {
   cursor: pointer;
 }

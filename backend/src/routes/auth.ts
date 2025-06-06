@@ -1,13 +1,9 @@
-import { Router, Request, Response } from 'express';
+import { Router } from "express";
 const router = Router();
+import _ from "lodash";
+import validate from "../middleware/validateUsreData.js";
+import login from "../controller/authController.js";
 
-router.post('/', async (req: Request, res: Response) => {
-    const token = req.headers.authorization;
-    
-    if (!token) { 
-        res.status(401).send("No token provided");
-        return;
-    }
-})
+router.post("/", validate, login);
 
-export default router
+export default router;

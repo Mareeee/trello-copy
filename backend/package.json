@@ -11,6 +11,7 @@
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/config": "^3.3.5",
     "@types/express": "^5.0.2",
     "@types/jsonwebtoken": "^9.0.9",
@@ -26,10 +27,14 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "config": "^4.0.0",
     "cors": "^2.8.5",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "pg": "^8.16.0",
+    "pg-promise": "^11.14.0",
+    "winston": "^3.17.0"
   }
 }
