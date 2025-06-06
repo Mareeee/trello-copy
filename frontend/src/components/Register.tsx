@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
-import validate from "../utils/validate";
-import axios from "axios";
+import handleRegister from "../utils/handleRegister";
 import "./Register.css";
 
 type RegisterProps = {
@@ -17,24 +15,11 @@ function Register({ onSuccess, onSwitchToLogin }: RegisterProps) {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setError("");
+    const registerError = await handleRegister(email, password, repeatPassword);
+    setError(registerError);
 
-    const validationError = validate(email, password, repeatPassword);
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-    try {
-      const response = await axios.post("/api/users", { email, password });
-      localStorage.setItem("token", response.headers["x-auth-token"]);
+    if (!registerError) {
       onSuccess();
-      toast(`You have successfully registered your account!`);
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        setError(e.response?.data || "Registration failed.");
-      } else {
-        setError("An unexpected error occurred.");
-      }
     }
   };
 

@@ -1,7 +1,5 @@
+import handleLogin from "../utils/handleLogin";
 import { useState } from "react";
-import { toast } from "react-toastify";
-import validate from "../utils/validate";
-import axios from "axios";
 import "./Login.css";
 
 type LoginProps = {
@@ -16,25 +14,11 @@ function Login({ onSuccess, onSwitchToRegister }: LoginProps) {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    setError("");
+    const loginError = await handleLogin(email, password);
+    setError(loginError);
 
-    const validationError = validate(email, password);
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-
-    try {
-      const response = await axios.post("/api/auth", { email, password });
-      localStorage.setItem("token", response.headers["x-auth-token"]);
+    if (!loginError) {
       onSuccess();
-      toast(`You have successfully logged in!`);
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        setError(e.response?.data || "Login failed.");
-      } else {
-        setError("An unexpected error occurred.");
-      }
     }
   };
 

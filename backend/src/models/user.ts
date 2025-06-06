@@ -19,14 +19,17 @@ function generateAuthToken(user: User) {
 function validate(user: { email: string; password: string }) {
   const schema = Joi.object({
     email: Joi.string().required().email(),
-    password: Joi.string().required()
+    password: Joi.string().required(),
+    isAdmin: Joi.boolean()
   });
   return schema.validate(user);
 }
 
 async function addUser(userData: { email: string, password: string, isAdmin: boolean }) {
   const { error } = validate(userData);
-  if (error) return { error };
+  if (error) {
+    return { error };
+  }
 
   const existing = await pool.query("SELECT * FROM users WHERE email = $1", [userData.email]);
   if (existing.rows.length > 0) {
@@ -47,7 +50,7 @@ async function addUser(userData: { email: string, password: string, isAdmin: boo
     id: result.rows[0].id,
     email: result.rows[0].email,
     isAdmin: result.rows[0].is_admin,
-    password: hashedPassword // optional, can omit if not needed
+    password: hashedPassword
   };
 
   return { user };
@@ -55,7 +58,9 @@ async function addUser(userData: { email: string, password: string, isAdmin: boo
 
 async function findOne(email: string): Promise<User | null> {
   const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-  if (result.rows.length === 0) return null;
+  if (result.rows.length === 0) {
+    return null;
+  }
 
   const row = result.rows[0];
   return {
@@ -68,7 +73,9 @@ async function findOne(email: string): Promise<User | null> {
 
 async function findUser(id: number): Promise<User | null> {
   const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-  if (result.rows.length === 0) return null;
+  if (result.rows.length === 0) {
+    return null;
+  }
 
   const row = result.rows[0];
   return {

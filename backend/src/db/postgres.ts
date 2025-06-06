@@ -28,11 +28,13 @@ async function initDb() {
 
     console.log("Users table created");
 
-    const userCheck = await pool.query(`SELECT * FROM users WHERE email = $1`, ["admin@admin.com"]);
+    const userCheck = await pool.query(`SELECT * FROM users WHERE email = $1`, [
+      "admin@admin.com"
+    ]);
     if (userCheck.rows.length === 0) {
       await pool.query(
         `INSERT INTO users (email, password, is_admin) VALUES ($1, $2, $3)`,
-        ["admin@admin.com", "asdf", true]
+        ["admin@admin.com", process.env.pgAdminPassword, true]
       );
     }
 
