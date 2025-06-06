@@ -2,8 +2,8 @@ import { Router } from "express";
 const router = Router();
 import _ from "lodash";
 import validate from "../middleware/validateUsreData.js";
-import userController from "../controller/auth.js";
+import login from "../controller/authController.js";
 
-router.post("/", validate, userController);
+router.post("/", validate, login);
 
 export default router;

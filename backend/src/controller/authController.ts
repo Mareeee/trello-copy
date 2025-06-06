@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import logger from "../utils/logger.js";
 import _ from "lodash";
 
-export default async function userController(req: Request, res: Response): Promise<void> {
+export default async function login(req: Request, res: Response): Promise<void> {
   const user = await findOne(req.body.email);
   if (!user) {
     res.status(400).send("Invalid email or password.");

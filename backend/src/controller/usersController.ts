@@ -4,7 +4,7 @@ import _ from "lodash";
 import logger from "../utils/logger.js";
 import generateAuthToken from "../utils/generateAuthToken.js";
 
-export async function checkController(req: Request, res: Response): Promise<void> {
+export async function userSession(req: Request, res: Response): Promise<void> {
   try {
     const user = findUser(req["user"]._id);
     res.send(user);
@@ -13,7 +13,7 @@ export async function checkController(req: Request, res: Response): Promise<void
   }
 }
 
-export async function registrationController(req: Request, res: Response): Promise<void> {
+export async function registration(req: Request, res: Response): Promise<void> {
   const { user, error } = await addUser(req.body);
   if (error) {
     res.status(400).send(error);

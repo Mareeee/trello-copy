@@ -3,9 +3,9 @@ import auth from "../middleware/auth.js";
 import validate from "../middleware/validateUsreData.js"
 import { Router } from "express";
 const router = Router();
-import { checkController, registrationController } from "../controller/users.js";
+import { userSession, registration } from "../controller/usersController.js";
 
-router.get("/me", auth, checkController);
-router.post("/", validate, registrationController)
+router.get("/me", auth, userSession);
+router.post("/", validate, registration)
 
 export default router;
