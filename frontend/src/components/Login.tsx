@@ -1,6 +1,6 @@
 import handleLogin from "../utils/handleLogin";
 import { useState } from "react";
-import "./Login.css";
+import "../styles/Login.css";
 
 type LoginProps = {
   onSuccess: () => void;

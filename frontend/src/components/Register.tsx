@@ -1,6 +1,6 @@
 import { useState } from "react";
 import handleRegister from "../utils/handleRegister";
-import "./Register.css";
+import "../styles/Register.css";
 
 type RegisterProps = {
   onSuccess: () => void;

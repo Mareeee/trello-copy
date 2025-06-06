@@ -1,0 +1,19 @@
+.task-column {
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+  width: 25%;
+  padding: 10px;
+  background-color: #ebecf0;
+}
+
+.column-title {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}

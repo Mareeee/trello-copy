@@ -1,5 +1,6 @@
 import { logout } from "../utils/logout";
-import "./Board.css";
+import Tasks from "../components/Tasks";
+import "../styles/Board.css";
 
 type LogoutProps = {
   onSuccess: () => void;
@@ -16,6 +17,9 @@ export default function Board({ onSuccess, onSwitchToLogin }: LogoutProps) {
         <a className="logout" onClick={handleLogout}>
           Logout
         </a>
+      </div>
+      <div className="tasks">
+        <Tasks />
       </div>
     </div>
   );
