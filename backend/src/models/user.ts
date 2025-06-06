@@ -1,43 +1,14 @@
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import Joi from "joi";
 import { pool } from "../db/postgres.js";
-
-type User = {
-  id: number;
-  email: string;
-  password: string;
-  isAdmin: boolean;
-};
-
-function generateAuthToken(user: User) {
-  return jwt.sign({ _id: user.id, isAdmin: user.isAdmin }, process.env.jwtPrivateKey!, {
-    expiresIn: "1h"
-  });
-}
-
-function validate(user: { email: string; password: string }) {
-  const schema = Joi.object({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-    isAdmin: Joi.boolean()
-  });
-  return schema.validate(user);
-}
+import { User } from "../types/user.js";
+import hashPassword from "../utils/hashPassword.js";
 
 async function addUser(userData: { email: string, password: string, isAdmin: boolean }) {
-  const { error } = validate(userData);
-  if (error) {
-    return { error };
-  }
-
   const existing = await pool.query("SELECT * FROM users WHERE email = $1", [userData.email]);
   if (existing.rows.length > 0) {
     return { error: "User already registered." };
   }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(userData.password, salt);
+  const hashedPassword = await hashPassword(userData);
 
   const result = await pool.query(
     `INSERT INTO users (email, password, is_admin)
@@ -58,7 +29,7 @@ async function addUser(userData: { email: string, password: string, isAdmin: boo
 
 async function findOne(email: string): Promise<User | null> {
   const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-  if (result.rows.length === 0) {
+  if (!result || !result.rows || result.rows.length === 0) {
     return null;
   }
 
@@ -73,7 +44,7 @@ async function findOne(email: string): Promise<User | null> {
 
 async function findUser(id: number): Promise<User | null> {
   const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
-  if (result.rows.length === 0) {
+  if (!result || !result.rows || result.rows.length === 0) {
     return null;
   }
 
@@ -86,4 +57,4 @@ async function findUser(id: number): Promise<User | null> {
   };
 }
 
-export { validate, addUser, findUser, findOne, generateAuthToken };
+export { addUser, findUser, findOne };

@@ -16,11 +16,12 @@ function Register({ onSuccess, onSwitchToLogin }: RegisterProps) {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const registerError = await handleRegister(email, password, repeatPassword);
-    setError(registerError);
-
-    if (!registerError) {
-      onSuccess();
+    if (registerError) {
+      setError(registerError);
+      return;
     }
+    
+    onSuccess();
   };
 
   return (

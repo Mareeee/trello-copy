@@ -1,27 +1,28 @@
+import { initDb } from "./db/postgres.js";
 import express from "express";
 import setupRoutes from "./startup/routes.js";
-import env from "./startup/config.js";
-import { initDb } from "./db/postgres.js";
 import dotenv from "dotenv";
+import initEnv from "./startup/config.js";
+import logger from './utils/logger.js';
 
 try {
   dotenv.config();
 
-  env();
+  initEnv();
   await initDb();
 
   const app = express();
   setupRoutes(app);
 
   const port = process.env.PORT || 3000;
-  app.listen(port, () => console.log(`Listening on port ${port}...`));
+  app.listen(port, () => logger.info(`Listening on port ${port}...`));
 } catch (err) {
   const message = err?.message || "";
 
   if (message.includes("jwtPrivateKey")) {
-    console.error("ENV ERROR:", message);
+    logger.error("ENV ERROR:", message);
   } else {
-    console.error("GENERAL STARTUP ERROR:", message);
+    logger.error("GENERAL STARTUP ERROR:", message);
   }
 
   process.exit(1);

@@ -3,9 +3,13 @@ export default function validate(
   password: string,
   repeatPassword?: string
 ): string | null {
-  if (!email) return "Email required!";
+  if (!email) {
+    return "Email required!";
+  }
 
-  if (!password) return "Password required!";
+  if (!password) {
+    return "Password required!";
+  }
 
   if (repeatPassword && password !== repeatPassword) {
     return "Password does not match!";

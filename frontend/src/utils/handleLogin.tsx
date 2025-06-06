@@ -15,8 +15,7 @@ export default async function handleLogin(email: string, password: string) {
   } catch (e) {
     if (axios.isAxiosError(e)) {
       return e.response?.data || "Login failed.";
-    } else {
-      return "An unexpected error occurred.";
     }
+    return "An unexpected error occurred.";
   }
 }
