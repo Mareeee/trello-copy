@@ -2,12 +2,11 @@ import { logout } from "../utils/logout";
 import "./Board.css";
 
 type LogoutProps = {
-  onSuccess: () => void;
   onSwitchToLogin: () => void;
 };
 
-export default function Board({ onSuccess, onSwitchToLogin }: LogoutProps) {
-  const handleLogout = () => logout(onSuccess, onSwitchToLogin);
+export default function Board({ onSwitchToLogin }: LogoutProps) {
+  const handleLogout = () => logout(onSwitchToLogin);
 
   return (
     <div className="background">

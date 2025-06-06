@@ -30,7 +30,6 @@ function Home() {
       } catch (e) {
         logout(
           () => setModal("login"),
-          () => setModal("register")
         );
       }
     }
@@ -55,7 +54,6 @@ function Home() {
 
       {!modal && (
         <Board
-          onSuccess={() => setModal("login")}
           onSwitchToLogin={() => setModal("login")}
         />
       )}

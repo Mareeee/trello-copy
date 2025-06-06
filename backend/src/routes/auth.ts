@@ -1,31 +1,9 @@
-import { Router, Request, Response } from 'express';
+import { Router } from "express";
 const router = Router();
 import _ from "lodash";
-import bcrypt from "bcrypt";
-import {validate, findOne, generateAuthToken} from "../models/user.js";
+import validate from "../middleware/validateUsreData.js";
+import userController from "../controller/auth.js";
 
-router.post('/', async (req: Request, res: Response): Promise<void> => {
-    const { error } = validate(req.body);
-    if (error) {
-        res.status(400).send(error.details[0].message);
-        return;
-    }
+router.post("/", validate, userController);
 
-    const user = await findOne(req.body.email);
-    if (!user) {
-        res.status(400).send('Invalid email or password.');
-        return;
-    }
-    
-    const validPassword = await bcrypt.compare(req.body.password, user.password);
-    if (!validPassword) {
-        res.status(400).send('Invalid email or password.');
-        return;
-    }
-
-    const token = generateAuthToken(user);
-    res.header("x-auth-token", token).send(_.pick(user, ["id", "email"]))
-    console.log(`User logged in: ${user.email} (ID: ${user.id})`);
-})
-
-export default router
+export default router;

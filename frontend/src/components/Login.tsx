@@ -15,11 +15,12 @@ function Login({ onSuccess, onSwitchToRegister }: LoginProps) {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const loginError = await handleLogin(email, password);
-    setError(loginError);
-
-    if (!loginError) {
-      onSuccess();
+    if (loginError) {
+      setError(loginError);
+      return;
     }
+
+    onSuccess();
   };
 
   return (
