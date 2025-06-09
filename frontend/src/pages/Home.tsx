@@ -28,9 +28,7 @@ function Home() {
           headers: { "x-auth-token": token }
         });
       } catch (e) {
-        logout(
-          () => setModal("login"),
-        );
+        logout(() => setModal("login"));
       }
     }
 
@@ -55,6 +53,7 @@ function Home() {
       {!modal && (
         <Board
           onSwitchToLogin={() => setModal("login")}
+          userEmail={localStorage.getItem(STORAGE_KEYS.TOKEN)!}
         />
       )}
     </div>

@@ -4,13 +4,13 @@ import addTask from "../utils/addTask";
 import { Task as TaskType } from "../types/Task";
 import { Priority } from "../enums/Pirority";
 import { Status } from "../enums/Status";
-import { Sprint } from "../types/Sprint";
 
 type AddTaskProps = {
   onSuccess: (task: TaskType) => void;
+  author: string;
 };
 
-export default function AddTask({ onSuccess }: AddTaskProps) {
+export default function AddTask({ onSuccess, author }: AddTaskProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<Priority>(Priority.LOW);
@@ -21,37 +21,24 @@ export default function AddTask({ onSuccess }: AddTaskProps) {
   const handleAddTask = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!title || !description || !date) {
-      setError("All fields are required.");
-      return;
-    }
-
-    const fixedSprint: Sprint = {
-      id: 0,
-      title: "Temp",
-      author: "currentUser",
-      deleted: false
-    }
-
-    const newTask: TaskType = {
-        id: 6,
+    try {
+      const { validationError, newTask } = await addTask(
         title,
         description,
         priority,
-        date: new Date(date),
+        date,
         status,
-        sprint: fixedSprint,
-        author: "currentUser",
-        deleted: false
-    };
+        author
+      );
 
-    const addTaskError = await addTask(title, description);
-    if (addTaskError) {
-      setError(addTaskError);
+      if (validationError) {
+        setError(validationError);
+        return;
+      }
+      onSuccess(newTask);
+    } catch (error) {
       return;
     }
-
-    onSuccess(newTask);
   };
 
   return (

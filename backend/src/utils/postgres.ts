@@ -8,7 +8,8 @@ export default async (pool: Pool) => {
     try {
       logger.info(`DB attempt ${attempt}/10...`);
 
-      await pool.query(process.env.pgCreateTableQuerry);
+      await pool.query(process.env.pgCreateUsersTableQuerry);
+      await pool.query(process.env.pgCreateTasksTableQuerry);
 
       const userCheck = await pool.query(
         `SELECT * FROM users WHERE email = $1`,

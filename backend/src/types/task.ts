@@ -1,5 +1,5 @@
-import { Priority } from "../enums/Pirority";
-import { Status } from "../enums/Status";
+import { Status } from "../enums/status.js";
+import { Priority } from "../enums/priority.js";
 
 export type Task = {
     id: number;
