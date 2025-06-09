@@ -10,6 +10,18 @@
   align-items: center;
 }
 
+.add-task {
+  position: absolute;
+  left: 0;
+  margin: 1em;
+  padding: 1em;
+  background-color: rgb(210, 209, 209);
+  border-radius: 0.5em;
+  border: 0.1em solid rgb(169, 169, 169);
+  font-weight: bold;
+  color: #333;
+}
+
 .logout {
   position: absolute;
   right: 0;
@@ -22,7 +34,15 @@
   color: #333;
 }
 
-.logout:hover {
+.add-task-modal {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.logout:hover,
+.add-task:hover {
   cursor: pointer;
   background-color: rgba(210, 209, 209, 0.792);
 }
@@ -31,5 +51,23 @@
   display: flex;
   flex-direction: column;
   background-color: #f4f5f7;
+  height: 88vh;
+}
+
+.blurred {
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
 }
