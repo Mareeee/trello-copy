@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { logout } from "../utils/logout";
 import Tasks from "../components/Tasks";
 import "../styles/Board.css";
 import { Task as TaskType } from "../types/Task";
@@ -8,11 +7,7 @@ import AddTask from "./AddTask";
 import loadTasks from "../utils/loadTasks";
 import { toast } from "react-toastify";
 
-type Props = {
-  onSwitchToLogin: () => void;
-};
-
-export default function Board({ onSwitchToLogin }: Props) {
+export default function Board() {
   const [columns, setColumns] = useState<Record<Status, TaskType[]>>({
     [Status.TODO]: [],
     [Status.IN_PROGRESS]: [],
@@ -50,10 +45,6 @@ export default function Board({ onSwitchToLogin }: Props) {
     fetchTasks();
   }, []);
 
-  const handleLogout = () => {
-    logout(onSwitchToLogin);
-  }
-
   const showModal = (visible: boolean) => {
     setAddTaskModal(visible);
   }
@@ -83,9 +74,6 @@ export default function Board({ onSwitchToLogin }: Props) {
             + Task
           </a>
           <h1>Welcome to Trello</h1>
-          <a className="logout" onClick={handleLogout}>
-            Logout
-          </a>
         </div>
         <div className="tasks">
           <Tasks columns={columns} setColumns={setColumns} />

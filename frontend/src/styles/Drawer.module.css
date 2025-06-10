@@ -1,0 +1,97 @@
+.Drawer {
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  width: 400px;
+  max-width: 40%;
+  height: 100%;
+  background: #eee;
+  transition: transform 0.5s ease-out;
+  overflow: hidden;
+}
+
+.Drawer.Left {
+  left: 0;
+  transform: translateX(-100%);
+  box-shadow: -0.5rem 0 1.5rem #000;
+}
+
+.Drawer.Left .Close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  cursor: pointer;
+}
+
+.Drawer.Right {
+  right: 0;
+  transform: translateX(100%);
+  box-shadow: 0.5rem 0 1.5rem #000;
+}
+
+.Drawer.Right .Close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  cursor: pointer;
+}
+
+.UserBar {
+  position: absolute;
+  left: 1rem;
+  display: flex;
+}
+
+.Drawer .Content {
+  margin: 5rem 1rem 1rem;
+}
+
+.Drawer.Open {
+  transform: translateX(0%);
+}
+
+.Close img {
+  width: 30px;
+  height: 30px;
+}
+
+.Content {
+  width: auto;
+  margin-top: 2em;
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+}
+
+.SearchInput {
+  width: 100%;
+  padding: 0.8em;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.Options {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.Option {
+  padding: 1em;
+  background-color: rgb(210, 209, 209);
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  text-align: center;
+  width: auto;
+  border: 0.1em solid rgb(169, 169, 169);
+}
+
+.Option:hover {
+  background-color: rgba(210, 209, 209, 0.8);
+  cursor: pointer;
+}
