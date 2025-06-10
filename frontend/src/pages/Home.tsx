@@ -1,13 +1,13 @@
 import { STORAGE_KEYS } from "../constants/storageKeys";
 import { useEffect, useState } from "react";
 import { logout } from "../utils/logout";
+import { Drawer } from "../components/Drawer";
+import hamburgerImage from "../images/hamburger.png";
 import Register from "../components/Register";
 import Login from "../components/Login";
 import Board from "../components/Board";
 import axios from "axios";
 import "./Home.css";
-import { Drawer } from "../components/Drawer";
-import hamburgerImage from "../images/hamburger.png";
 
 function Home() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

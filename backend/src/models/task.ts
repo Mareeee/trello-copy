@@ -26,25 +26,105 @@ async function addTask(taskData: Task) {
         taskData.deleted
       ]
     );
-    
+
     return { task: result.rows[0] };
   } catch (error) {
     return { error: error };
   }
 }
 
+async function editTask(taskData: Task) {
+  try {
+    const task = await getTask(taskData.id);
+    if (!task) {
+      logger.error("Could not find the task!");
+      return;
+    }
+
+    const result = await pool.query(
+      `UPDATE tasks
+      SET title = $1, description = $2, priority = $3, date = $4, status = $5
+      WHERE id = $6
+      RETURNING id, title, description, priority, date, status, author, deleted`,
+      [
+        taskData.title,
+        taskData.description,
+        taskData.priority,
+        taskData.date,
+        taskData.status,
+        taskData.id
+      ]
+    );
+
+    return { task: result.rows[0] };
+  } catch (error) {
+    return { error: error };
+  }
+}
+
+async function deleteTask(deleteTask) {
+  try {
+    const task = await getTask(deleteTask.id);
+    if (!task) {
+      logger.error("Could not find the task!");
+      return;
+    }
+
+    await pool.query(
+      `UPDATE tasks
+      SET deleted = true
+      WHERE id = $1`,
+      [deleteTask.id]
+    );
+
+    return { success: true };
+  } catch (error) {
+    return { error: error };
+  }
+}
+
+async function getTask(taskId: number): Promise<Task> {
+  try {
+    const result = await pool.query(`SELECT * FROM tasks WHERE id = $1`, [
+      taskId
+    ]);
+
+    if (!result) {
+      logger.error("Failed to receive tasks!");
+      return;
+    }
+
+    const task: Task = result.rows.map((row) => ({
+      id: row.id,
+      sprintId: row.sprint_id,
+      title: row.title,
+      description: row.description,
+      priority: row.priority,
+      date: row.date,
+      status: row.status,
+      author: row.author,
+      deleted: row.deleted
+    }));
+
+    return task;
+  } catch (error) {
+    return error;
+  }
+}
+
 async function getTasks(sprintId: number): Promise<Task[]> {
   try {
     const result = await pool.query(
-      `SELECT * FROM tasks WHERE sprint_id = $1`,
+      `SELECT * FROM tasks WHERE sprint_id = $1 AND deleted = FALSE`,
       [sprintId]
     );
 
     if (!result) {
       logger.error("Failed to receive tasks!");
+      return;
     }
 
-    if  (result.rows.length === 0) {
+    if (result.rows.length === 0) {
       return [];
     }
 
@@ -57,7 +137,7 @@ async function getTasks(sprintId: number): Promise<Task[]> {
       date: row.date,
       status: row.status,
       author: row.author,
-      deleted: row.deleted,
+      deleted: row.deleted
     }));
 
     return tasks;
@@ -66,4 +146,4 @@ async function getTasks(sprintId: number): Promise<Task[]> {
   }
 }
 
-export { addTask, getTasks };
+export { addTask, editTask, deleteTask, getTasks };

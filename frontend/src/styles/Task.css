@@ -6,3 +6,29 @@
   cursor: pointer;
   overflow-x: hidden;
 }
+
+.options {
+  display: flex;
+  justify-content: space-between;
+}
+
+.images {
+  display: flex;
+}
+
+.edit-image,
+.delete-image {
+  height: 1.2em;
+  width: 1.2em;
+  padding: 7px;
+  border-radius: 100%;
+  overflow: visible;
+}
+
+.edit-image:hover {
+  background-color: rgba(255, 255, 0, 0.5);
+}
+
+.delete-image:hover {
+  background-color: rgba(255, 0, 0, 0.5);
+}

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { addTask as _addTask, getTasks as _getTasks } from "../models/task.js";
+import { addTask as _addTask, editTask as _editTask, deleteTask as _deleteTask, getTasks as _getTasks } from "../models/task.js";
 import _ from "lodash";
 import logger from "../utils/logger.js";
 
@@ -12,6 +12,28 @@ export async function addTask(req: Request, res: Response): Promise<void> {
   
   res.status(200).send(task);
   logger.info(`Task added: ${task.title} (ID: ${task.id})`);
+}
+
+export async function editTask(req: Request, res: Response): Promise<void> {
+    const { task, error } = await _editTask(req.body);
+  if (error) {
+    res.status(400).send(error);
+    return;
+  }
+  
+  res.status(200).send(task);
+  logger.info(`Task edited: ${task.title} (ID: ${task.id})`);
+}
+
+export async function deleteTask(req: Request, res: Response): Promise<void> {
+    const { success, error } = await _deleteTask(req.body);
+  if (error) {
+    res.status(400).send(error);
+    return;
+  }
+  
+  res.status(200).send(success);
+  logger.info(`Task deleted successfully`);
 }
 
 export async function getTasks(req: Request, res: Response): Promise<void> {
