@@ -8,7 +8,7 @@ const statusLabels: Record<Status, string> = {
   [Status.TODO]: "To Do",
   [Status.IN_PROGRESS]: "In Progress",
   [Status.QA]: "QA",
-  [Status.DONE]: "Done",
+  [Status.DONE]: "Done"
 };
 
 type TasksProps = {
@@ -38,7 +38,9 @@ export default function Tasks({ columns, setColumns }: TasksProps) {
 
       return newColumns;
     });
+  };
 
+  const handleDragEnd = () => {
     setDraggedTask(null);
   };
 
@@ -54,6 +56,7 @@ export default function Tasks({ columns, setColumns }: TasksProps) {
             tasks={columns[status as Status] || []}
             onDropTask={handleDrop}
             onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
           />
         ))}
     </div>

@@ -1,16 +1,16 @@
-import { useState } from "react";
 import "../styles/AddTask.css";
 import addTask from "../utils/addTask";
+import { useState } from "react";
 import { Task as TaskType } from "../types/Task";
 import { Priority } from "../enums/Pirority";
 import { Status } from "../enums/Status";
+import { toast } from "react-toastify";
 
 type AddTaskProps = {
   onSuccess: (task: TaskType) => void;
-  author: string;
 };
 
-export default function AddTask({ onSuccess, author }: AddTaskProps) {
+export default function AddTask({ onSuccess }: AddTaskProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<Priority>(Priority.LOW);
@@ -22,21 +22,23 @@ export default function AddTask({ onSuccess, author }: AddTaskProps) {
     event.preventDefault();
 
     try {
-      const { validationError, newTask } = await addTask(
+      const { success, validationError, newTask } = await addTask(
         title,
         description,
         priority,
         date,
         status,
-        author
       );
 
-      if (validationError) {
-        setError(validationError);
+      if (!success) {
+        setError(validationError!);
         return;
       }
+
+      toast.success("Successfully created a new task!");
       onSuccess(newTask);
     } catch (error) {
+      toast.error("Unable to create a new task!");
       return;
     }
   };

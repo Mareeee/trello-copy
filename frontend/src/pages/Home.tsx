@@ -53,7 +53,6 @@ function Home() {
       {!modal && (
         <Board
           onSwitchToLogin={() => setModal("login")}
-          userEmail={localStorage.getItem(STORAGE_KEYS.TOKEN)!}
         />
       )}
     </div>

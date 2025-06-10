@@ -1,8 +1,16 @@
 import { pool } from "../db/postgres.js";
 import { Task } from "../types/task.js";
+import getEmail from "../utils/decodeJwtToken.js";
+import logger from "../utils/logger.js";
 
 async function addTask(taskData: Task) {
   try {
+    const email = getEmail(taskData.author);
+    if (!email) {
+      logger.error("Error parsing jwt token!");
+      return;
+    }
+
     const result = await pool.query(
       `INSERT INTO tasks (sprint_id, title, description, priority, date, status, author, deleted)
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -14,30 +22,18 @@ async function addTask(taskData: Task) {
         taskData.priority,
         taskData.date,
         taskData.status,
-        taskData.author,
+        email,
         taskData.deleted
       ]
     );
-
-    const task = {
-      id: result.rows[0].id,
-      sprintId: result.rows[0].sprintId,
-      title: result.rows[0].title,
-      description: result.rows[0].description,
-      priority: result.rows[0].priority,
-      date: result.rows[0].date,
-      status: result.rows[0].status,
-      author: result.rows[0].author,
-      deleted: result.rows[0].deleted
-    };
-
-    return { task };
+    
+    return { task: result.rows[0] };
   } catch (error) {
     return { error: error };
   }
 }
 
-async function getTasks(sprintId: number): Promise<Task[] | null> {
+async function getTasks(sprintId: number): Promise<Task[]> {
   try {
     const result = await pool.query(
       `SELECT * FROM tasks WHERE sprint_id = $1`,
@@ -45,8 +41,9 @@ async function getTasks(sprintId: number): Promise<Task[] | null> {
     );
 
     if (!result || !result.rows || result.rows.length === 0) {
-      return null;
+      return [];
     }
+
     const tasks: Task[] = result.rows.map((row) => ({
       id: row.id,
       sprintId: row.sprint_id,
@@ -61,7 +58,7 @@ async function getTasks(sprintId: number): Promise<Task[] | null> {
 
     return tasks;
   } catch (error) {
-    return null;
+    return [];
   }
 }
 
