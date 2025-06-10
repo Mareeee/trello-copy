@@ -28,9 +28,7 @@ function Home() {
           headers: { "x-auth-token": token }
         });
       } catch (e) {
-        logout(
-          () => setModal("login"),
-        );
+        logout(() => setModal("login"));
       }
     }
 
