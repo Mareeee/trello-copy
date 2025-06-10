@@ -7,7 +7,7 @@ export default async function handleLogin(email: string, password: string) {
   if (validationError) {
     return validationError;
   }
-
+  
   try {
     const response = await axios.post("/api/auth", { email, password });
     localStorage.setItem("token", response.headers["x-auth-token"]);

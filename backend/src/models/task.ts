@@ -40,7 +40,11 @@ async function getTasks(sprintId: number): Promise<Task[]> {
       [sprintId]
     );
 
-    if (!result || !result.rows || result.rows.length === 0) {
+    if (!result) {
+      logger.error("Failed to receive tasks!");
+    }
+
+    if  (result.rows.length === 0) {
       return [];
     }
 
@@ -58,7 +62,7 @@ async function getTasks(sprintId: number): Promise<Task[]> {
 
     return tasks;
   } catch (error) {
-    return [];
+    return error;
   }
 }
 
