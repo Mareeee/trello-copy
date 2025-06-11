@@ -1,13 +1,13 @@
-import "../styles/EditTask.css";
-import editTask from "../utils/editTask";
-import { useState } from "react";
 import { Task as TaskType } from "../types/Task";
+import { useState } from "react";
 import { Priority } from "../enums/Pirority";
 import { Status } from "../enums/Status";
 import { toast } from "react-toastify";
+import editTask from "../utils/editTask";
+import "../styles/EditTask.css";
 
 type EditTaskProps = {
-  onSuccess: (task: TaskType) => void;
+  onSuccess: (task: TaskType, originalStatus: number) => void;
   task: TaskType;
 };
 
@@ -15,7 +15,9 @@ export default function Edit({ onSuccess, task }: EditTaskProps) {
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description);
   const [priority, setPriority] = useState<Priority>(task.priority);
-  const [date, setDate] = useState<string>(new Date(task.date).toISOString().substring(0, 10));
+  const [date, setDate] = useState<string>(
+    new Date(task.date).toISOString().substring(0, 10)
+  );
   const [status, setStatus] = useState<Status>(task.status);
   const [error, setError] = useState("");
 
@@ -23,22 +25,24 @@ export default function Edit({ onSuccess, task }: EditTaskProps) {
     event.preventDefault();
 
     try {
-      const { success, validationError, newTask } = await editTask(
-        task.id,
+      const updatedTask: TaskType = {
+        ...task,
         title,
         description,
         priority,
-        date,
-        status,
-      );
+        date: new Date(date),
+        status
+      };
 
-      if (!success) {
-        setError(validationError!);
+      const { error, newTask } = await editTask(updatedTask);
+
+      if (!newTask) {
+        setError(error!);
         return;
       }
 
       toast.success("Successfully edited the task!");
-      onSuccess(newTask);
+      onSuccess(newTask, task.status);
     } catch (error) {
       toast.error("Unable to edit the task!");
       return;

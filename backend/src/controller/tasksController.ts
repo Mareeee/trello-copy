@@ -1,10 +1,12 @@
-import { Request, Response } from "express";
 import { addTask as _addTask, editTask as _editTask, deleteTask as _deleteTask, getTasks as _getTasks } from "../models/task.js";
-import _ from "lodash";
+import { Request, Response } from "express";
+import getEmail from "../utils/decodeJwtToken.js";
 import logger from "../utils/logger.js";
+import _ from "lodash";
 
 export async function addTask(req: Request, res: Response): Promise<void> {
-  const { task, error } = await _addTask(req.body);
+  const email = getEmail(req.headers['authorization'].split(" ")[1]);
+  const { task, error } = await _addTask(req.body, email);
   if (error) {
     res.status(400).send(error);
     return;
@@ -15,7 +17,8 @@ export async function addTask(req: Request, res: Response): Promise<void> {
 }
 
 export async function editTask(req: Request, res: Response): Promise<void> {
-    const { task, error } = await _editTask(req.body);
+    const email = getEmail(req.headers['authorization'].split(" ")[1]);
+    const { task, error } = await _editTask(req.body, email);
   if (error) {
     res.status(400).send(error);
     return;

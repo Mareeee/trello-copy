@@ -16,7 +16,7 @@ export default function Board() {
     [Status.QA]: [],
     [Status.DONE]: []
   });
-  const [addTaskModal, setAddTaskModal] = useState<boolean>(false);
+  const [addTaskModal, setShowAddTaskModal] = useState<boolean>(false);
   const [editTask, setEditTask] = useState<TaskType | null>(null);
   const [deleteTask, setDeleteTask] = useState<TaskType | null>(null);
 
@@ -50,7 +50,7 @@ export default function Board() {
   }, []);
 
   const showAddModal = (visible: boolean) => {
-    setAddTaskModal(visible);
+    setShowAddTaskModal(visible);
   };
 
   const handleAddNewTask = (newTask: TaskType) => {
@@ -62,16 +62,24 @@ export default function Board() {
     showAddModal(false);
   };
 
-  const handleEditTask = (updatedTask: TaskType) => {
-    setColumns((prev) => {
-      const newColumns = { ...prev };
+  const handleEditTask = (updatedTask: TaskType, originalStatus: Status) => {
+    setColumns((prevColumns) => {
+      const newColumns = { ...prevColumns };
 
-      const tasksInStatus = [...newColumns[updatedTask.status]];
+      if (updatedTask.status === originalStatus) {
+        newColumns[updatedTask.status] = newColumns[updatedTask.status].map(
+          (task) => (task.id === updatedTask.id ? updatedTask : task)
+        );
+      } else {
+        newColumns[originalStatus] = newColumns[originalStatus].filter(
+          (task) => task.id !== updatedTask.id
+        );
 
-      const taskIndex = tasksInStatus.findIndex((t) => t.id === updatedTask.id);
-
-      tasksInStatus[taskIndex] = updatedTask;
-      newColumns[updatedTask.status] = tasksInStatus;
+        newColumns[updatedTask.status] = [
+          ...newColumns[updatedTask.status],
+          updatedTask
+        ];
+      }
 
       return newColumns;
     });
@@ -116,7 +124,11 @@ export default function Board() {
       {deleteTask && (
         <div className="modal-overlay" onClick={() => setDeleteTask(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <DeleteTask onSuccess={handleDeleteTask} task={deleteTask} onCancel={() => setDeleteTask(null)} />
+            <DeleteTask
+              onSuccess={handleDeleteTask}
+              task={deleteTask}
+              onCancel={() => setDeleteTask(null)}
+            />
           </div>
         </div>
       )}

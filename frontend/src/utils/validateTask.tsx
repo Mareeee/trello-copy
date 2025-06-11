@@ -1,7 +1,7 @@
 export default function validateTask(
   title: string,
   description: string,
-  date: string
+  date: Date
 ): string | null {
   if (!title) {
     return "Title required!";

@@ -1,27 +1,28 @@
-import axios from "axios";
-import validateTask from "./validateTask";
-import { Priority } from "../enums/Pirority";
-import { Status } from "../enums/Status";
 import { STORAGE_KEYS } from "../constants/storageKeys";
+import { Task } from "../types/Task";
+import validateTask from "./validateTask";
+import axios from "axios";
 
-export default async function addTask(
-  title: string,
-  description: string,
-  priority: Priority,
-  date: string,
-  status: Status,
-) {
+export default async function addTask(task: Task) {
   try {
-    const validationError = validateTask(title, description, date);
-    if (validationError) {
-      return { success: false, validationError: validationError };
+    const error = validateTask(task.title, task.description, task.date);
+    if (error) {
+      return { error: error };
     }
 
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-    const response = await axios.post("/api/tasks", { title, description, priority, date: new Date(date), status, sprintId: 0, author: token, deleted: false });
+    const response = await axios.post(
+      "/api/tasks",
+      task,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-    return { success: true, newTask: response.data };
+    if (!response || response === undefined) {
+      return { error: "Failed to add a new task!"};
+    }
+
+    return { newTask: response.data };
   } catch (e) {
-    return { success: false, validationError: "Failed to add a new task!" };
+    return { error: "Failed to add a new task!" };
   }
 }

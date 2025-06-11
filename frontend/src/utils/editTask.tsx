@@ -1,38 +1,28 @@
 import { STORAGE_KEYS } from "../constants/storageKeys";
-import { Priority } from "../enums/Pirority";
-import { Status } from "../enums/Status";
-import axios from "axios";
+import { Task } from "../types/Task";
 import validateTask from "./validateTask";
+import axios from "axios";
 
-export default async function editTask(
-  id: number,
-  title: string,
-  description: string,
-  priority: Priority,
-  date: string,
-  status: Status
-) {
+export default async function editTask(task: Task) {
   try {
-    const validationError = validateTask(title, description, date);
-    if (validationError) {
-      return { success: false, validationError: validationError };
+    const error = validateTask(task.title, task.description, task.date);
+    if (error) {
+      return { error: error };
     }
 
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-    const response = await axios.post("/api/tasks/edit", {
-      id,
-      title,
-      description,
-      priority,
-      date: new Date(date),
-      status,
-      sprintId: 0,
-      author: token,
-      deleted: false
-    });
+    const response = await axios.post(
+      "/api/tasks/edit",
+      task,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
-    return { success: true, newTask: response.data };
+    if (!response || response === undefined) {
+      return { error: "Failed to edit a task!"};
+    }
+
+    return { newTask: response.data };
   } catch (e) {
-    return { success: false, validationError: "Failed to edit a task!" };
+    return { error: "Failed to edit a task!" };
   }
 }
