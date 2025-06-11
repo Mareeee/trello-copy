@@ -31,7 +31,12 @@ export default function Tasks({ columns, setColumns, editTaskProp, deleteTaskPro
       return;
     }
 
-    editTask(draggedTask.id, draggedTask.title, draggedTask.description, draggedTask.priority, draggedTask.date.toString(), status);
+    const updatedTask: TaskType = {
+        ...draggedTask,
+        status
+      };
+
+    editTask(updatedTask);
 
     setColumns((prev) => {
       const newColumns = { ...prev };

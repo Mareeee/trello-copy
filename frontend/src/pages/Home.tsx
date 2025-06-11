@@ -32,7 +32,7 @@ function Home() {
         }
 
         await axios.get("/api/users/me", {
-          headers: { "x-auth-token": token }
+          headers: { Authorization: `Bearer ${token}` }
         });
       } catch (e) {
         handleLogout();

@@ -1,16 +1,9 @@
 import { pool } from "../db/postgres.js";
 import { Task } from "../types/task.js";
-import getEmail from "../utils/decodeJwtToken.js";
 import logger from "../utils/logger.js";
 
-async function addTask(taskData: Task) {
+async function addTask(taskData: Task, email: string) {
   try {
-    const email = getEmail(taskData.author);
-    if (!email) {
-      logger.error("Error parsing jwt token!");
-      return;
-    }
-
     const result = await pool.query(
       `INSERT INTO tasks (sprint_id, title, description, priority, date, status, author, deleted)
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
@@ -33,7 +26,7 @@ async function addTask(taskData: Task) {
   }
 }
 
-async function editTask(taskData: Task) {
+async function editTask(taskData: Task, email: string) {
   try {
     const task = await getTask(taskData.id);
     if (!task) {
@@ -43,8 +36,8 @@ async function editTask(taskData: Task) {
 
     const result = await pool.query(
       `UPDATE tasks
-      SET title = $1, description = $2, priority = $3, date = $4, status = $5
-      WHERE id = $6
+      SET title = $1, description = $2, priority = $3, date = $4, status = $5, author = $6
+      WHERE id = $7
       RETURNING id, title, description, priority, date, status, author, deleted`,
       [
         taskData.title,
@@ -52,6 +45,7 @@ async function editTask(taskData: Task) {
         taskData.priority,
         taskData.date,
         taskData.status,
+        email,
         taskData.id
       ]
     );
@@ -70,12 +64,16 @@ async function deleteTask(deleteTask) {
       return;
     }
 
-    await pool.query(
+    const response = await pool.query(
       `UPDATE tasks
       SET deleted = true
       WHERE id = $1`,
       [deleteTask.id]
     );
+
+    if (!response || response === undefined) {
+      return { error: true };
+    }
 
     return { success: true };
   } catch (error) {

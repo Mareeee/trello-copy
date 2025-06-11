@@ -1,6 +1,7 @@
 import { toast } from "react-toastify";
 import axios from "axios";
 import validate from "./validate";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 
 export default async function handleLogin(email: string, password: string) {
   const validationError = validate(email, password);
@@ -10,7 +11,9 @@ export default async function handleLogin(email: string, password: string) {
   
   try {
     const response = await axios.post("/api/auth", { email, password });
-    localStorage.setItem("token", response.headers["x-auth-token"]);
+
+    console.log(response);
+    localStorage.setItem(STORAGE_KEYS.TOKEN, response.headers["authorization"]);
     toast(`You have successfully logged in!`);
   } catch (e) {
     if (axios.isAxiosError(e)) {

@@ -22,16 +22,22 @@ export default function AddTask({ onSuccess }: AddTaskProps) {
     event.preventDefault();
 
     try {
-      const { success, validationError, newTask } = await addTask(
+      const task: TaskType = {
+        id: 0,
+        sprintId: 0,
         title,
         description,
         priority,
-        date,
+        date: new Date(date),
         status,
-      );
+        author: "",
+        deleted: false
+      }
 
-      if (!success) {
-        setError(validationError!);
+      const { error, newTask } = await addTask(task);
+
+      if (!newTask) {
+        setError(error!);
         return;
       }
 
