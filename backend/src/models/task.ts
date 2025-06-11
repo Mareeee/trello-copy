@@ -71,7 +71,7 @@ async function deleteTask(deleteTask) {
       [deleteTask.id]
     );
 
-    if (!response || response === undefined) {
+    if (!response) {
       return { error: true };
     }
 

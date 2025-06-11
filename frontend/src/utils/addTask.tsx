@@ -17,7 +17,7 @@ export default async function addTask(task: Task) {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    if (!response || response === undefined) {
+    if (!response) {
       return { error: "Failed to add a new task!"};
     }
 

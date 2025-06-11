@@ -17,7 +17,7 @@ export default async function editTask(task: Task) {
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    if (!response || response === undefined) {
+    if (!response) {
       return { error: "Failed to edit a task!"};
     }
 
