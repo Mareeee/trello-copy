@@ -15,11 +15,9 @@
   right: 0;
   margin: 1em;
   padding: 1em;
-  background-color: rgb(210, 209, 209);
-  border-radius: 0.5em;
-  border: 0.1em solid rgb(169, 169, 169);
-  font-weight: bold;
-  color: #333;
+  height: 35px;
+  width: 35px;
+  border-radius: 1em;
 }
 
 .add-task-modal {
@@ -31,7 +29,7 @@
 
 .add-task:hover {
   cursor: pointer;
-  background-color: rgba(210, 209, 209, 0.8);
+  background-color: rgba(210, 209, 209, 0.6);
 }
 
 .tasks {

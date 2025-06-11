@@ -25,10 +25,23 @@
   overflow: visible;
 }
 
+.edit-image {
+  height: 1em;
+  width: 1em;
+}
+
+.delete-image {
+  padding: 5px;
+}
+
 .edit-image:hover {
   background-color: rgba(255, 255, 0, 0.5);
 }
 
 .delete-image:hover {
   background-color: rgba(255, 0, 0, 0.5);
+}
+
+p {
+  margin-top: 0.7em;
 }

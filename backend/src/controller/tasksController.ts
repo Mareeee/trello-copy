@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
 import { addTask as _addTask, editTask as _editTask, deleteTask as _deleteTask, getTasks as _getTasks } from "../models/task.js";
-import _ from "lodash";
+import { Request, Response } from "express";
 import logger from "../utils/logger.js";
+import _ from "lodash";
+import { Priority } from "../enums/priority.js";
 
 export async function addTask(req: Request, res: Response): Promise<void> {
   const { task, error } = await _addTask(req.body);
@@ -44,7 +45,7 @@ export async function getTasks(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const tasks = await _getTasks(sprintId);
+    const tasks = await _getTasks(sprintId, req.query.search as string, parseInt(req.query.priority as string));
     if (!tasks) {
       res.status(404).send("No tasks found.");
       return;

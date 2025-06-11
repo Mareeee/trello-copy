@@ -66,8 +66,9 @@ function Home() {
             onClick={() => setIsDrawerOpen(true)}
           />
 
-          <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} onSwitchToLogin={() => handleLogout()}/>
-          <Board/>
+          <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} onSwitchToLogin={() => handleLogout()}>
+            <Board/>
+          </Drawer>
         </>
       )}
     </div>

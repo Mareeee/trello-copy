@@ -1,11 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Task as TaskType } from "../types/Task";
+import { SearchContext } from "../contexts/SearchContext";
+import { DrawerContext } from "../contexts/DrawerContext";
 import { Status } from "../enums/Status";
 import { toast } from "react-toastify";
 import Tasks from "../components/Tasks";
 import AddTask from "./AddTask";
 import EditTask from "./EditTask";
 import DeleteTask from "./DeleteTask";
+import plusImage from "../images/plus.png";
 import loadTasks from "../utils/loadTasks";
 import "../styles/Board.css";
 
@@ -19,11 +22,13 @@ export default function Board() {
   const [addTaskModal, setAddTaskModal] = useState<boolean>(false);
   const [editTask, setEditTask] = useState<TaskType | null>(null);
   const [deleteTask, setDeleteTask] = useState<TaskType | null>(null);
+  const { search, priority } = useContext(SearchContext);
+  const { open } = useContext(DrawerContext);
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const loadedTasks: TaskType[] = await loadTasks();
+        const loadedTasks: TaskType[] = await loadTasks(search, priority);
         if (!loadedTasks) {
           return;
         }
@@ -47,7 +52,7 @@ export default function Board() {
     };
 
     fetchTasks();
-  }, []);
+  }, [search, priority]);
 
   const showAddModal = (visible: boolean) => {
     setAddTaskModal(visible);
@@ -116,7 +121,11 @@ export default function Board() {
       {deleteTask && (
         <div className="modal-overlay" onClick={() => setDeleteTask(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <DeleteTask onSuccess={handleDeleteTask} task={deleteTask} onCancel={() => setDeleteTask(null)} />
+            <DeleteTask
+              onSuccess={handleDeleteTask}
+              task={deleteTask}
+              onCancel={() => setDeleteTask(null)}
+            />
           </div>
         </div>
       )}
@@ -124,12 +133,15 @@ export default function Board() {
       <div
         className={`board-content ${addTaskModal ? "blurred" : ""} ${
           editTask ? "blurred" : ""
-        }`}
+        } ${open ? "blurred" : ""}`}
       >
         <div className="navigation">
-          <a className="add-task" onClick={() => showAddModal(true)}>
-            + Task
-          </a>
+          <img
+            src={plusImage}
+            alt="addTask"
+            className="add-task"
+            onClick={() => showAddModal(true)}
+          />
           <h1>Welcome to Trello</h1>
         </div>
         <div className="tasks">
