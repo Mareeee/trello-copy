@@ -10,6 +10,8 @@ type TaskColumnProps = {
   onDropTask: (status: Status) => void;
   onDragStart: (task: TaskType) => void;
   onDragEnd: (task: TaskType) => void;
+  editTask: (task: TaskType) => void;
+  deleteTask: (task: TaskType) => void;
 };
 
 export default function TaskColumn({
@@ -19,6 +21,8 @@ export default function TaskColumn({
   onDropTask,
   onDragStart,
   onDragEnd,
+  editTask,
+  deleteTask,
 }: TaskColumnProps) {
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -29,11 +33,22 @@ export default function TaskColumn({
   };
 
   return (
-    <div className="task-column" onDragOver={handleDragOver} onDrop={handleDrop}>
+    <div
+      className="task-column"
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <h2 className="column-title">{title}</h2>
       <div className="task-list">
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} onDragStart={() => onDragStart(task)} onDragEnd={() => onDragEnd(task)} />
+          <TaskCard
+            key={task.id}
+            task={task}
+            onDragStart={() => onDragStart(task)}
+            onDragEnd={() => onDragEnd(task)}
+            editTask={editTask}
+            deleteTask={deleteTask}
+          />
         ))}
       </div>
     </div>

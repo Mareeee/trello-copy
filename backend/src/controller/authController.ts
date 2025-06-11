@@ -19,6 +19,6 @@ export default async function login(req: Request, res: Response): Promise<void> 
   }
 
   const token = generateAuthToken(user);
-  res.header("x-auth-token", token).send(_.pick(user, ["id", "email"]));
+  res.header("Authorization", token).send(_.pick(user, ["id", "email"]));
   logger.info(`User logged in: ${user.email} (ID: ${user.id})`);
 }

@@ -1,59 +1,59 @@
-import "../styles/AddTask.css";
-import addTask from "../utils/addTask";
-import { useState } from "react";
 import { Task as TaskType } from "../types/Task";
+import { useState } from "react";
 import { Priority } from "../enums/Pirority";
 import { Status } from "../enums/Status";
 import { toast } from "react-toastify";
+import editTask from "../utils/editTask";
+import "../styles/EditTask.css";
 
-type AddTaskProps = {
-  onSuccess: (task: TaskType) => void;
+type EditTaskProps = {
+  onSuccess: (task: TaskType, originalStatus: number) => void;
+  task: TaskType;
 };
 
-export default function AddTask({ onSuccess }: AddTaskProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState<Priority>(Priority.LOW);
-  const [date, setDate] = useState<string>("");
-  const [status, setStatus] = useState<Status>(Status.TODO);
+export default function Edit({ onSuccess, task }: EditTaskProps) {
+  const [title, setTitle] = useState(task.title);
+  const [description, setDescription] = useState(task.description);
+  const [priority, setPriority] = useState<Priority>(task.priority);
+  const [date, setDate] = useState<string>(
+    new Date(task.date).toISOString().substring(0, 10)
+  );
+  const [status, setStatus] = useState<Status>(task.status);
   const [error, setError] = useState("");
 
-  const handleAddTask = async (event: React.FormEvent) => {
+  const handleEditTask = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
-      const task: TaskType = {
-        id: 0,
-        sprintId: 0,
+      const updatedTask: TaskType = {
+        ...task,
         title,
         description,
         priority,
         date: new Date(date),
-        status,
-        author: "",
-        deleted: false
-      }
+        status
+      };
 
-      const { error, newTask } = await addTask(task);
+      const { error, newTask } = await editTask(updatedTask);
 
       if (!newTask) {
         setError(error!);
         return;
       }
 
-      toast.success("Successfully created a new task!");
-      onSuccess(newTask);
+      toast.success("Successfully edited the task!");
+      onSuccess(newTask, task.status);
     } catch (error) {
-      toast.error("Unable to create a new task!");
+      toast.error("Unable to edit the task!");
       return;
     }
   };
 
   return (
-    <div className="add-task-form">
-      <h2>Create Task</h2>
+    <div className="edit-task-form">
+      <h2>Edit Task</h2>
 
-      <form name="add-task" onSubmit={handleAddTask}>
+      <form name="edit-task" onSubmit={handleEditTask}>
         <label>Title</label>
         <input
           type="text"
@@ -83,7 +83,7 @@ export default function AddTask({ onSuccess }: AddTaskProps) {
         <label>Due Date</label>
         <input
           type="date"
-          value={date}
+          value={new Date(date).toISOString().substring(0, 10)}
           onChange={(e) => setDate(e.target.value)}
         />
 
@@ -98,7 +98,7 @@ export default function AddTask({ onSuccess }: AddTaskProps) {
           <option value={Status.DONE}>Done</option>
         </select>
 
-        <input type="submit" value="Create" />
+        <input type="submit" value="Edit" />
       </form>
 
       {error && (

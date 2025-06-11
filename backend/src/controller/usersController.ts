@@ -22,6 +22,6 @@ export async function registration(req: Request, res: Response): Promise<void> {
 
   const token = generateAuthToken(_.omit(user, ["password"]));
 
-  res.header("x-auth-token", token).send(_.pick(user, ["id", "email"]));
+  res.header("Authorization", token).send(_.pick(user, ["id", "email"]));
   logger.info(`User registered: ${user.email} (ID: ${user.id})`);
 }

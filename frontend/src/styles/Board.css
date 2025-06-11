@@ -12,18 +12,6 @@
 
 .add-task {
   position: absolute;
-  left: 0;
-  margin: 1em;
-  padding: 1em;
-  background-color: rgb(210, 209, 209);
-  border-radius: 0.5em;
-  border: 0.1em solid rgb(169, 169, 169);
-  font-weight: bold;
-  color: #333;
-}
-
-.logout {
-  position: absolute;
   right: 0;
   margin: 1em;
   padding: 1em;
@@ -41,10 +29,9 @@
   width: 100%;
 }
 
-.logout:hover,
 .add-task:hover {
   cursor: pointer;
-  background-color: rgba(210, 209, 209, 0.792);
+  background-color: rgba(210, 209, 209, 0.8);
 }
 
 .tasks {

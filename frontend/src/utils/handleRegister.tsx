@@ -1,5 +1,5 @@
-import axios from "axios";
 import { toast } from "react-toastify";
+import axios from "axios";
 import validate from "./validate";
 
 export default async function handleRegister(
@@ -18,7 +18,7 @@ export default async function handleRegister(
       password,
       isAdmin: false
     });
-    localStorage.setItem("token", response.headers["x-auth-token"]);
+    localStorage.setItem("token", response.headers["authorization"]);
     toast(`You have successfully logged in!`);
   } catch (e) {
     if (axios.isAxiosError(e)) {

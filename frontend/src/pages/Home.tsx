@@ -1,6 +1,8 @@
 import { STORAGE_KEYS } from "../constants/storageKeys";
 import { useEffect, useState } from "react";
 import { logout } from "../utils/logout";
+import { Drawer } from "../components/Drawer";
+import hamburgerImage from "../images/hamburger.png";
 import Register from "../components/Register";
 import Login from "../components/Login";
 import Board from "../components/Board";
@@ -8,10 +10,15 @@ import axios from "axios";
 import "./Home.css";
 
 function Home() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [modal, setModal] = useState<"login" | "register" | null>(null);
 
   function handleAuthSuccess() {
     setModal(null);
+  }
+
+  const handleLogout = () => {
+    logout(() => setModal("login"));
   }
 
   useEffect(() => {
@@ -25,10 +32,10 @@ function Home() {
         }
 
         await axios.get("/api/users/me", {
-          headers: { "x-auth-token": token }
+          headers: { Authorization: `Bearer ${token}` }
         });
       } catch (e) {
-        logout(() => setModal("login"));
+        handleLogout();
       }
     }
 
@@ -51,9 +58,17 @@ function Home() {
       )}
 
       {!modal && (
-        <Board
-          onSwitchToLogin={() => setModal("login")}
-        />
+        <>
+          <img
+            className="hamburger"
+            src={hamburgerImage}
+            alt="hamburger"
+            onClick={() => setIsDrawerOpen(true)}
+          />
+
+          <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} onSwitchToLogin={() => handleLogout()}/>
+          <Board/>
+        </>
       )}
     </div>
   );
