@@ -7,7 +7,8 @@ export default async function loadTasks(
   priorityTerm: Priority
 ): Promise<TaskType[]> {
   try {
-    const response = await axios.get("/api/tasks/0", {
+    const sprintId = 0;
+    const response = await axios.get(`/api/tasks/${sprintId}`, {
       params: { search: searchTerm, priority: priorityTerm }
     });
     if (!response || !response.data) {
