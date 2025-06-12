@@ -29,25 +29,25 @@ const Drawer = ({
   const [search, setSearch] = useState("");
   const [priority, setPriority] = useState<Priority>(Priority.NONE);
 
-  const classNames = `${styles.Drawer} ${styles[direction]} ${
-    isOpen ? styles.Open : ""
-  }`;
-
   const handleClose = () => {
     onClose();
     onSwitchToLogin();
   };
 
   useEffect(() => {
-    setOpen(isOpen)
-  }, [isOpen])
+    setOpen(isOpen);
+  }, [isOpen]);
 
   return (
     <DrawerContext.Provider value={{ open, setOpen }}>
       <SearchContext.Provider
         value={{ search, setSearch, priority, setPriority }}
       >
-        <div className={classNames}>
+        <div
+          className={`${styles.Drawer} ${styles[direction]} ${
+            isOpen ? styles.Open : ""
+          }`}
+        >
           <div className={styles.UserBar}>
             <h2>User Bar</h2>
           </div>

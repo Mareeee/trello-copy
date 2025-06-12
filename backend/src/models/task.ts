@@ -113,7 +113,7 @@ async function getTask(taskId: number): Promise<Task> {
 async function getTasks(sprintId: number, searchTerm: string, priority: number): Promise<Task[]> {
   try {
     const values: (string | number)[] = [sprintId];
-    let conditions = [`sprint_id = $1`, `deleted = FALSE`];
+    const conditions = [`sprint_id = $1`, `deleted = FALSE`];
 
     if (searchTerm && searchTerm.trim() !== "") {
       values.push(searchTerm);
@@ -152,7 +152,7 @@ async function getTasks(sprintId: number, searchTerm: string, priority: number):
     return tasks;
   } catch (error) {
     logger.error("Error getting tasks:", error);
-    return [];
+    return error;
   }
 }
 
