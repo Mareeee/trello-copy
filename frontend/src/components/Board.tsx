@@ -12,9 +12,14 @@ import EditTask from "./EditTask";
 import DeleteTask from "./DeleteTask";
 import plusImage from "../images/plus.png";
 import loadTasks from "../utils/loadTasks";
+import calculateProgress from "../utils/calculateProgress";
 import "../styles/Board.css";
 
-export default function Board() {
+export default function Board({
+  setProgress
+}: {
+  setProgress: (value: number) => void;
+}) {
   const [columns, setColumns] = useState<Record<Status, TaskType[]>>({
     [Status.TODO]: [],
     [Status.IN_PROGRESS]: [],
@@ -34,7 +39,6 @@ export default function Board() {
     }
 
     handleWebSocketMessages(socket, setColumns);
-    
   }, [socket]);
 
   useEffect(() => {
@@ -66,6 +70,11 @@ export default function Board() {
     fetchTasks();
   }, [search, priority]);
 
+  const updateProgress = async () => {
+    const result = await calculateProgress(0);
+    setProgress(result.progress ?? 0);
+  };
+
   const showAddModal = (visible: boolean) => {
     setShowAddTaskModal(visible);
   };
@@ -75,6 +84,8 @@ export default function Board() {
       ...prev,
       [newTask.status]: [...prev[newTask.status], newTask]
     }));
+
+    updateProgress();
 
     showAddModal(false);
   };
@@ -100,6 +111,8 @@ export default function Board() {
 
       return newColumns;
     });
+
+    updateProgress();
 
     setEditTask(null);
   };
@@ -170,6 +183,7 @@ export default function Board() {
             setColumns={setColumns}
             editTaskProp={(task: TaskType) => setEditTask(task)}
             deleteTaskProp={(task: TaskType) => setDeleteTask(task)}
+            setProgress={setProgress}
           />
         </div>
       </div>

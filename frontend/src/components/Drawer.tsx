@@ -4,6 +4,8 @@ import { ReactNode, useEffect, useState } from "react";
 import { SearchContext } from "../contexts/SearchContext";
 import { Priority } from "../enums/Pirority";
 import { DrawerContext } from "../contexts/DrawerContext";
+import ProgressBar from "./ProgressBar";
+import calculateProgress from "../utils/calculateProgress";
 
 enum DrawerDirection {
   Left = "Left",
@@ -16,6 +18,9 @@ type Props = {
   children: ReactNode;
   onClose: () => void;
   onSwitchToLogin: () => void;
+  progress: number;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
+
 };
 
 const Drawer = ({
@@ -23,11 +28,22 @@ const Drawer = ({
   children,
   direction = DrawerDirection.Left,
   onClose,
-  onSwitchToLogin
+  onSwitchToLogin,
+  progress,
+  setProgress,
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [priority, setPriority] = useState<Priority>(Priority.NONE);
+
+  useEffect(() => {
+    async function calculate() {
+      const currentProgress = await calculateProgress(0);
+      setProgress(currentProgress);
+    }
+
+    calculate();
+  }, [progress])
 
   const handleClose = () => {
     onClose();
@@ -55,22 +71,30 @@ const Drawer = ({
             <img src={closeImage} alt="close" className="close-image" />
           </div>
           <div className={styles.Content}>
-            <input
-              type="text"
-              placeholder="Search..."
-              className={styles.SearchInput}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <select
-              value={priority}
-              onChange={(e) => setPriority(Number(e.target.value) as Priority)}
-            >
-              <option value={Priority.NONE}>Select Priority</option>
-              <option value={Priority.LOW}>Low</option>
-              <option value={Priority.MEDIUM}>Medium</option>
-              <option value={Priority.HIGH}>High</option>
-            </select>
+            <div>
+              <input
+                type="text"
+                placeholder="Search..."
+                className={styles.SearchInput}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <select
+                value={priority}
+                onChange={(e) =>
+                  setPriority(Number(e.target.value) as Priority)
+                }
+              >
+                <option value={Priority.NONE}>Select Priority</option>
+                <option value={Priority.LOW}>Low</option>
+                <option value={Priority.MEDIUM}>Medium</option>
+                <option value={Priority.HIGH}>High</option>
+              </select>
+              <div className={styles.ProgressBar}>
+                <label>Progress:</label>
+                <ProgressBar progress={progress} />
+              </div>
+            </div>
             <div className={styles.Options}>
               <a className={styles.Option}>Sprint Boards</a>
               <a className={styles.Option}>Notifications</a>

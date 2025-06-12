@@ -18,9 +18,10 @@ type TasksProps = {
   setColumns: React.Dispatch<React.SetStateAction<Record<Status, TaskType[]>>>;
   editTaskProp: (task: TaskType) => void;
   deleteTaskProp: (task: TaskType) => void;
+  setProgress: (value: number) => void;
 };
 
-export default function Tasks({ columns, setColumns, editTaskProp, deleteTaskProp }: TasksProps) {
+export default function Tasks({ columns, setColumns, editTaskProp, deleteTaskProp, setProgress }: TasksProps) {
   const [draggedTask, setDraggedTask] = useState<TaskType | null>(null);
   const socket = useWebSocket();
 
@@ -52,6 +53,8 @@ export default function Tasks({ columns, setColumns, editTaskProp, deleteTaskPro
 
       return newColumns;
     });
+
+    setProgress(0);
   };
 
   const handleDragEnd = () => {
