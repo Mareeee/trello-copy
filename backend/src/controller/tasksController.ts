@@ -47,7 +47,7 @@ export async function getTasks(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const tasks = await _getTasks(sprintId);
+    const tasks = await _getTasks(sprintId, req.query.search as string, parseInt(req.query.priority as string));
     if (!tasks) {
       res.status(404).send("No tasks found.");
       return;

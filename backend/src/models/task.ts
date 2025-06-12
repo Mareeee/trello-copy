@@ -110,19 +110,30 @@ async function getTask(taskId: number): Promise<Task> {
   }
 }
 
-async function getTasks(sprintId: number): Promise<Task[]> {
+async function getTasks(sprintId: number, searchTerm: string, priority: number): Promise<Task[]> {
   try {
-    const result = await pool.query(
-      `SELECT * FROM tasks WHERE sprint_id = $1 AND deleted = FALSE`,
-      [sprintId]
-    );
+    const values: (string | number)[] = [sprintId];
+    const conditions = [`sprint_id = $1`, `deleted = FALSE`];
+
+    if (searchTerm && searchTerm.trim() !== "") {
+      values.push(searchTerm);
+      conditions.push(`(title ILIKE '%' || $${values.length} || '%' OR description ILIKE '%' || $${values.length} || '%')`);
+    }
+
+    if (priority !== undefined && priority !== 0) {
+      values.push(priority);
+      conditions.push(`priority = $${values.length}`);
+    }
+
+    const finalQuery = `
+      SELECT * FROM tasks
+      WHERE ${conditions.join(" AND ")}
+    `;
+
+    const result = await pool.query(finalQuery, values);
 
     if (!result) {
       logger.error("Failed to receive tasks!");
-      return;
-    }
-
-    if (result.rows.length === 0) {
       return [];
     }
 
@@ -140,6 +151,7 @@ async function getTasks(sprintId: number): Promise<Task[]> {
 
     return tasks;
   } catch (error) {
+    logger.error("Error getting tasks:", error);
     return error;
   }
 }
