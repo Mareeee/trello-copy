@@ -1,9 +1,10 @@
+import { setupWebSocket } from "./startup/websockets.js";
 import { initDb } from "./db/postgres.js";
 import express from "express";
 import setupRoutes from "./startup/routes.js";
 import dotenv from "dotenv";
 import initEnv from "./startup/config.js";
-import logger from './utils/logger.js';
+import logger from "./utils/logger.js";
 
 try {
   dotenv.config();
@@ -15,7 +16,12 @@ try {
   setupRoutes(app);
 
   const port = process.env.PORT || 3000;
-  app.listen(port, () => logger.info(`Listening on port ${port}...`));
+  const server = app.listen(port, () =>
+    logger.info(`Listening on port ${port}...`)
+  );
+
+  setupWebSocket(server);
+
 } catch (err) {
   const message = err?.message || "";
 

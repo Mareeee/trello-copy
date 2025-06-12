@@ -1,3 +1,4 @@
+import { useWebSocket } from "../contexts/WebSocketContext";
 import { Task as TaskType } from "../types/Task";
 import { Status } from "../enums/Status";
 import { useState } from "react";
@@ -21,6 +22,7 @@ type TasksProps = {
 
 export default function Tasks({ columns, setColumns, editTaskProp, deleteTaskProp }: TasksProps) {
   const [draggedTask, setDraggedTask] = useState<TaskType | null>(null);
+  const socket = useWebSocket();
 
   const handleDragStart = (task: TaskType) => {
     setDraggedTask(task);
@@ -36,7 +38,7 @@ export default function Tasks({ columns, setColumns, editTaskProp, deleteTaskPro
         status
       };
 
-    editTask(updatedTask);
+    editTask(updatedTask, socket!);
 
     setColumns((prev) => {
       const newColumns = { ...prev };

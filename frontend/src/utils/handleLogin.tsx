@@ -12,7 +12,6 @@ export default async function handleLogin(email: string, password: string) {
   try {
     const response = await axios.post("/api/auth", { email, password });
 
-    console.log(response);
     localStorage.setItem(STORAGE_KEYS.TOKEN, response.headers["authorization"]);
     toast(`You have successfully logged in!`);
   } catch (e) {

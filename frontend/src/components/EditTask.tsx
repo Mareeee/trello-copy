@@ -1,3 +1,4 @@
+import { useWebSocket } from "../contexts/WebSocketContext";
 import { Task as TaskType } from "../types/Task";
 import { useState } from "react";
 import { Priority } from "../enums/Pirority";
@@ -20,6 +21,7 @@ export default function Edit({ onSuccess, task }: EditTaskProps) {
   );
   const [status, setStatus] = useState<Status>(task.status);
   const [error, setError] = useState("");
+  const socket = useWebSocket();
 
   const handleEditTask = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -34,7 +36,7 @@ export default function Edit({ onSuccess, task }: EditTaskProps) {
         status
       };
 
-      const { error, newTask } = await editTask(updatedTask);
+      const { error, newTask } = await editTask(updatedTask, socket!);
 
       if (!newTask) {
         setError(error!);

@@ -67,7 +67,8 @@ async function deleteTask(deleteTask) {
     const response = await pool.query(
       `UPDATE tasks
       SET deleted = true
-      WHERE id = $1`,
+      WHERE id = $1
+      RETURNING id, title, description, priority, date, status, author, deleted`,
       [deleteTask.id]
     );
 
@@ -75,7 +76,7 @@ async function deleteTask(deleteTask) {
       return { error: true };
     }
 
-    return { success: true };
+    return { task: response.rows[0] };
   } catch (error) {
     return { error: error };
   }
@@ -110,14 +111,20 @@ async function getTask(taskId: number): Promise<Task> {
   }
 }
 
-async function getTasks(sprintId: number, searchTerm: string, priority: number): Promise<Task[]> {
+async function getTasks(
+  sprintId: number,
+  searchTerm: string,
+  priority: number
+): Promise<Task[]> {
   try {
     const values: (string | number)[] = [sprintId];
     let conditions = [`sprint_id = $1`, `deleted = FALSE`];
 
     if (searchTerm && searchTerm.trim() !== "") {
       values.push(searchTerm);
-      conditions.push(`(title ILIKE '%' || $${values.length} || '%' OR description ILIKE '%' || $${values.length} || '%')`);
+      conditions.push(
+        `(title ILIKE '%' || $${values.length} || '%' OR description ILIKE '%' || $${values.length} || '%')`
+      );
     }
 
     if (priority !== undefined && priority !== 0) {

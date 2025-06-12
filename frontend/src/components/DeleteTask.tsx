@@ -2,6 +2,7 @@ import { Task as TaskType } from "../types/Task";
 import { toast } from "react-toastify";
 import deleteTask from "../utils/deleteTask";
 import "../styles/DeleteTask.css";
+import { useWebSocket } from "../contexts/WebSocketContext";
 
 type EditTaskProps = {
   onSuccess: (task: TaskType) => void;
@@ -14,11 +15,13 @@ export default function DeleteTask({
   task,
   onCancel
 }: EditTaskProps) {
+  const socket = useWebSocket();
+
   const handleDeleteTask = async (event: React.FormEvent) => {
     event.preventDefault();
 
     try {
-      const { success } = await deleteTask(task.id);
+      const { success } = await deleteTask(task.id, socket!);
       if (!success) {
         toast.error("Unable to delete the task!");
         return;
