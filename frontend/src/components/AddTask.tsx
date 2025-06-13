@@ -1,10 +1,11 @@
-import "../styles/AddTask.css";
-import addTask from "../utils/addTask";
-import { useState } from "react";
+import { useWebSocket } from "../contexts/WebSocketContext";
 import { Task as TaskType } from "../types/Task";
+import { useState } from "react";
 import { Priority } from "../enums/Pirority";
 import { Status } from "../enums/Status";
 import { toast } from "react-toastify";
+import addTask from "../utils/addTask";
+import "../styles/AddTask.css";
 
 type AddTaskProps = {
   onSuccess: (task: TaskType) => void;
@@ -17,6 +18,7 @@ export default function AddTask({ onSuccess }: AddTaskProps) {
   const [date, setDate] = useState<string>("");
   const [status, setStatus] = useState<Status>(Status.TODO);
   const [error, setError] = useState("");
+  const socket = useWebSocket();
 
   const handleAddTask = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -34,7 +36,7 @@ export default function AddTask({ onSuccess }: AddTaskProps) {
         deleted: false
       }
 
-      const { error, newTask } = await addTask(task);
+      const { error, newTask } = await addTask(task, socket!);
 
       if (!newTask) {
         setError(error!);

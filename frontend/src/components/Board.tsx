@@ -2,8 +2,10 @@ import { useContext, useEffect, useState } from "react";
 import { Task as TaskType } from "../types/Task";
 import { SearchContext } from "../contexts/SearchContext";
 import { DrawerContext } from "../contexts/DrawerContext";
+import { useWebSocket } from "../contexts/WebSocketContext";
 import { Status } from "../enums/Status";
 import { toast } from "react-toastify";
+import handleWebSocketMessages from "../utils/handleWebSocketMessages";
 import Tasks from "../components/Tasks";
 import AddTask from "./AddTask";
 import EditTask from "./EditTask";
@@ -24,6 +26,16 @@ export default function Board() {
   const [deleteTask, setDeleteTask] = useState<TaskType | null>(null);
   const { search, priority } = useContext(SearchContext);
   const { open } = useContext(DrawerContext);
+  const socket = useWebSocket();
+
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    handleWebSocketMessages(socket, setColumns);
+    
+  }, [socket]);
 
   useEffect(() => {
     const fetchTasks = async () => {

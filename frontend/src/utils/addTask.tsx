@@ -3,7 +3,7 @@ import { Task } from "../types/Task";
 import validateTask from "./validateTask";
 import axios from "axios";
 
-export default async function addTask(task: Task) {
+export default async function addTask(task: Task, socket: WebSocket) {
   try {
     const error = validateTask(task.title, task.description, task.date);
     if (error) {
@@ -11,14 +11,21 @@ export default async function addTask(task: Task) {
     }
 
     const token = localStorage.getItem(STORAGE_KEYS.TOKEN);
-    const response = await axios.post(
-      "/api/tasks",
-      task,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+    const response = await axios.post("/api/tasks", task, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
 
     if (!response) {
-      return { error: "Failed to add a new task!"};
+      return { error: "Failed to add a new task!" };
+    }
+
+    if (socket && socket.readyState === WebSocket.OPEN) {
+      socket.send(
+        JSON.stringify({
+          type: "TASK_CREATED",
+          task: response.data,
+        })
+      );
     }
 
     return { newTask: response.data };

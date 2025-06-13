@@ -29,13 +29,13 @@ export async function editTask(req: Request, res: Response): Promise<void> {
 }
 
 export async function deleteTask(req: Request, res: Response): Promise<void> {
-    const { success, error } = await _deleteTask(req.body);
+    const { task, error } = await _deleteTask(req.body);
   if (error) {
     res.status(400).send(error);
     return;
   }
   
-  res.status(200).send(success);
+  res.status(200).send(task);
   logger.info(`Task deleted successfully`);
 }
 

@@ -20,6 +20,10 @@ async function addTask(taskData: Task, email: string) {
       ]
     );
 
+    if (!result || !result.rows || !result.rows[0]) {
+      return { error: "Error getting response from DB!" };
+    }
+
     return { task: result.rows[0] };
   } catch (error) {
     return { error: error };
@@ -50,6 +54,10 @@ async function editTask(taskData: Task, email: string) {
       ]
     );
 
+    if (!result || !result.rows || !result.rows[0]) {
+      return { error: "Error getting response from DB!" };
+    }
+
     return { task: result.rows[0] };
   } catch (error) {
     return { error: error };
@@ -67,15 +75,16 @@ async function deleteTask(deleteTask) {
     const response = await pool.query(
       `UPDATE tasks
       SET deleted = true
-      WHERE id = $1`,
+      WHERE id = $1
+      RETURNING id, title, description, priority, date, status, author, deleted`,
       [deleteTask.id]
     );
 
-    if (!response) {
-      return { error: true };
+    if (!response || !response.rows || !response.rows[0]) {
+      return { error: "Error getting response from DB!" };
     }
 
-    return { success: true };
+    return { task: response.rows[0] };
   } catch (error) {
     return { error: error };
   }
@@ -110,14 +119,20 @@ async function getTask(taskId: number): Promise<Task> {
   }
 }
 
-async function getTasks(sprintId: number, searchTerm: string, priority: number): Promise<Task[]> {
+async function getTasks(
+  sprintId: number,
+  searchTerm: string,
+  priority: number
+): Promise<Task[]> {
   try {
     const values: (string | number)[] = [sprintId];
     const conditions = [`sprint_id = $1`, `deleted = FALSE`];
 
     if (searchTerm && searchTerm.trim() !== "") {
       values.push(searchTerm);
-      conditions.push(`(title ILIKE '%' || $${values.length} || '%' OR description ILIKE '%' || $${values.length} || '%')`);
+      conditions.push(
+        `(title ILIKE '%' || $${values.length} || '%' OR description ILIKE '%' || $${values.length} || '%')`
+      );
     }
 
     if (priority !== undefined && priority !== 0) {
