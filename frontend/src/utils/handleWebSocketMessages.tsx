@@ -1,11 +1,18 @@
 import { Task as TaskType } from "../types/Task";
 import { Status } from "../enums/Status";
 import { toast } from "react-toastify";
+import calculateProgress from "./calculateProgress";
 
 export default function handleWebSocketMessages(
   socket: WebSocket,
-  setColumns: React.Dispatch<React.SetStateAction<Record<Status, TaskType[]>>>
+  setColumns: React.Dispatch<React.SetStateAction<Record<Status, TaskType[]>>>,
+  setProgress: (value: number) => void
 ) {
+  const updateProgress = async () => {
+    const result = await calculateProgress(0);
+    setProgress(result ?? 0);
+  };
+
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
 
@@ -26,6 +33,8 @@ export default function handleWebSocketMessages(
       }));
 
       toast.info(`New task added: ${message.task.title}`);
+      updateProgress();
+
       return;
     } else if (message.type === "TASK_UPDATED") {
       const updatedTask = message.task;
@@ -68,6 +77,8 @@ export default function handleWebSocketMessages(
       });
 
       toast.info(`Task updated: ${updatedTask.title}`);
+      updateProgress();
+
       return;
     } else if (message.type === "TASK_DELETED") {
       const deletedTask = message.task;
@@ -83,6 +94,8 @@ export default function handleWebSocketMessages(
       });
 
       toast.info(`Task deleted: ${deletedTask.title}`);
+      updateProgress();
+
       return;
     }
 

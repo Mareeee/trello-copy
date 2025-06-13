@@ -12,6 +12,7 @@ import "./Home.css";
 function Home() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [modal, setModal] = useState<"login" | "register" | null>(null);
+  const [progress, setProgress] = useState<number>(0);
 
   function handleAuthSuccess() {
     setModal(null);
@@ -19,7 +20,7 @@ function Home() {
 
   const handleLogout = () => {
     logout(() => setModal("login"));
-  }
+  };
 
   useEffect(() => {
     async function checkToken() {
@@ -66,8 +67,14 @@ function Home() {
             onClick={() => setIsDrawerOpen(true)}
           />
 
-          <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} onSwitchToLogin={() => handleLogout()}>
-            <Board/>
+          <Drawer
+            isOpen={isDrawerOpen}
+            onClose={() => setIsDrawerOpen(false)}
+            onSwitchToLogin={() => handleLogout()}
+            progress={progress}
+            setProgress={setProgress}
+          >
+            <Board setProgress={setProgress} />
           </Drawer>
         </>
       )}

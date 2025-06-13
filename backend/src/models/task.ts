@@ -1,4 +1,5 @@
 import { pool } from "../db/postgres.js";
+import { Status } from "../enums/status.js";
 import { Task } from "../types/task.js";
 import logger from "../utils/logger.js";
 
@@ -90,6 +91,25 @@ async function deleteTask(deleteTask) {
   }
 }
 
+async function taskProgress(sprintId: number) {
+  try {
+    const tasks = await getTasks(sprintId, "", 0);
+    if (!tasks || tasks.length === 0) {
+      return { progress: 0 };
+    }
+
+    const doneTasks = tasks.filter(
+      (task) => task.status == Status.DONE
+    );
+
+    const progress = Math.round((doneTasks .length/ tasks.length) * 100);
+
+    return { progress: progress };
+  } catch (error) {
+    return { error: error };
+  }
+}
+
 async function getTask(taskId: number): Promise<Task> {
   try {
     const result = await pool.query(`SELECT * FROM tasks WHERE id = $1`, [
@@ -171,4 +191,4 @@ async function getTasks(
   }
 }
 
-export { addTask, editTask, deleteTask, getTasks };
+export { addTask, editTask, deleteTask, taskProgress, getTasks };
