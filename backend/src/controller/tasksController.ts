@@ -40,7 +40,6 @@ export async function deleteTask(req: Request, res: Response): Promise<void> {
     res.status(400).send(error);
     return;
   }
-
   res.status(200).send(task);
   logger.info(`Task deleted successfully`);
 }

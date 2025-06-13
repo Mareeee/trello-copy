@@ -22,7 +22,7 @@ async function addTask(taskData: Task, email: string) {
     );
 
     if (!result || !result.rows || !result.rows[0]) {
-      return { error: true };
+      return { error: "Error getting response from DB!" };
     }
 
     return { task: result.rows[0] };
