@@ -21,6 +21,10 @@ async function addTask(taskData: Task, email: string) {
       ]
     );
 
+    if (!result || !result.rows || !result.rows[0]) {
+      return { error: true };
+    }
+
     return { task: result.rows[0] };
   } catch (error) {
     return { error: error };
@@ -51,6 +55,10 @@ async function editTask(taskData: Task, email: string) {
       ]
     );
 
+    if (!result || !result.rows || !result.rows[0]) {
+      return { error: "Error getting response from DB!" };
+    }
+
     return { task: result.rows[0] };
   } catch (error) {
     return { error: error };
@@ -73,8 +81,8 @@ async function deleteTask(deleteTask) {
       [deleteTask.id]
     );
 
-    if (!response) {
-      return { error: true };
+    if (!response || !response.rows || !response.rows[0]) {
+      return { error: "Error getting response from DB!" };
     }
 
     return { task: response.rows[0] };

@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { WS } from "../constants/webSockets";
 
 const WebSocketContext = createContext<WebSocket | null>(null);
 
@@ -14,7 +13,7 @@ export const WebSocketProvider = ({
   useEffect(() => {
     if (socketRef.current) return;
 
-    const ws = new WebSocket(WS.WS_ADDRESS);
+    const ws = new WebSocket(process.env.REACT_APP_WS_ADDRESS!);
     socketRef.current = ws;
 
     ws.onopen = () => {
