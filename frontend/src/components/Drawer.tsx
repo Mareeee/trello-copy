@@ -1,9 +1,9 @@
-import styles from "../styles/Drawer.module.css";
-import closeImage from "../images/close.png";
 import { ReactNode, useEffect, useState } from "react";
 import { SearchContext } from "../contexts/SearchContext";
-import { Priority } from "../enums/Pirority";
 import { DrawerContext } from "../contexts/DrawerContext";
+import { Priority } from "../enums/Pirority";
+import styles from "../styles/Drawer.module.css";
+import closeImage from "../images/close.png";
 import ProgressBar from "./ProgressBar";
 import calculateProgress from "../utils/calculateProgress";
 
@@ -20,7 +20,6 @@ type Props = {
   onSwitchToLogin: () => void;
   progress: number;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
-
 };
 
 const Drawer = ({
@@ -39,11 +38,11 @@ const Drawer = ({
   useEffect(() => {
     async function calculate() {
       const currentProgress = await calculateProgress(0);
-      setProgress(currentProgress);
+      setProgress(currentProgress ?? 0);
     }
 
     calculate();
-  }, [progress])
+  }, [])
 
   const handleClose = () => {
     onClose();

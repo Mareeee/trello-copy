@@ -38,7 +38,7 @@ export default function Board({
       return;
     }
 
-    handleWebSocketMessages(socket, setColumns);
+    handleWebSocketMessages(socket, setColumns, setProgress);
   }, [socket]);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function Board({
 
   const updateProgress = async () => {
     const result = await calculateProgress(0);
-    setProgress(result.progress ?? 0);
+    setProgress(result ?? 0);
   };
 
   const showAddModal = (visible: boolean) => {
@@ -98,6 +98,8 @@ export default function Board({
         newColumns[updatedTask.status] = newColumns[updatedTask.status].map(
           (task) => (task.id === updatedTask.id ? updatedTask : task)
         );
+
+        updateProgress();
       } else {
         newColumns[originalStatus] = newColumns[originalStatus].filter(
           (task) => task.id !== updatedTask.id
@@ -111,8 +113,6 @@ export default function Board({
 
       return newColumns;
     });
-
-    updateProgress();
 
     setEditTask(null);
   };
@@ -129,6 +129,8 @@ export default function Board({
 
       return newColumns;
     });
+
+    updateProgress();
 
     setDeleteTask(null);
   };

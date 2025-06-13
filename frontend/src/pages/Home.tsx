@@ -2,7 +2,6 @@ import { STORAGE_KEYS } from "../constants/storageKeys";
 import { useEffect, useState } from "react";
 import { logout } from "../utils/logout";
 import { Drawer } from "../components/Drawer";
-import calculateProgress from "../utils/calculateProgress";
 import hamburgerImage from "../images/hamburger.png";
 import Register from "../components/Register";
 import Login from "../components/Login";
@@ -22,15 +21,6 @@ function Home() {
   const handleLogout = () => {
     logout(() => setModal("login"));
   };
-
-  useEffect(() => {
-    async function updateProgress() {
-      const result = await calculateProgress(0);
-      setProgress(result.progress ?? 0);
-    }
-
-    updateProgress();
-  }, []);
 
   useEffect(() => {
     async function checkToken() {

@@ -4,6 +4,7 @@ import { Status } from "../enums/Status";
 import { useState } from "react";
 import editTask from "../utils/editTask";
 import TaskColumn from "./TaskColumn";
+import calculateProgress from "../utils/calculateProgress";
 import "../styles/Tasks.css";
 
 const statusLabels: Record<Status, string> = {
@@ -21,7 +22,13 @@ type TasksProps = {
   setProgress: (value: number) => void;
 };
 
-export default function Tasks({ columns, setColumns, editTaskProp, deleteTaskProp, setProgress }: TasksProps) {
+export default function Tasks({
+  columns,
+  setColumns,
+  editTaskProp,
+  deleteTaskProp,
+  setProgress
+}: TasksProps) {
   const [draggedTask, setDraggedTask] = useState<TaskType | null>(null);
   const socket = useWebSocket();
 
@@ -35,9 +42,9 @@ export default function Tasks({ columns, setColumns, editTaskProp, deleteTaskPro
     }
 
     const updatedTask: TaskType = {
-        ...draggedTask,
-        status
-      };
+      ...draggedTask,
+      status
+    };
 
     editTask(updatedTask, socket!);
 
@@ -54,7 +61,12 @@ export default function Tasks({ columns, setColumns, editTaskProp, deleteTaskPro
       return newColumns;
     });
 
-    setProgress(0);
+    updateProgress();
+  };
+
+  const updateProgress = async () => {
+    const result = await calculateProgress(0);
+    setProgress(result ?? 0);
   };
 
   const handleDragEnd = () => {
