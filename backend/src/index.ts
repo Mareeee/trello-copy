@@ -5,6 +5,7 @@ import setupRoutes from "./startup/routes.js";
 import dotenv from "dotenv";
 import initEnv from "./startup/config.js";
 import logger from "./utils/logger.js";
+import "./jobs/dueTaskChecker.js"
 
 try {
   dotenv.config();

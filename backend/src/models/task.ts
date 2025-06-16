@@ -98,15 +98,39 @@ async function taskProgress(sprintId: number) {
       return { progress: 0 };
     }
 
-    const doneTasks = tasks.filter(
-      (task) => task.status == Status.DONE
-    );
+    const doneTasks = tasks.filter((task) => task.status == Status.DONE);
 
-    const progress = Math.round((doneTasks .length/ tasks.length) * 100);
+    const progress = Math.round((doneTasks.length / tasks.length) * 100);
 
     return { progress: progress };
   } catch (error) {
     return { error: error };
+  }
+}
+
+async function getDueTasks(dueDate: Date): Promise<Task[]> {
+  try {
+    const result = await pool.query(
+      `SELECT * FROM tasks
+      WHERE status != 'completed' AND deleted = FALSE`
+    );
+
+    const tasks = result.rows.filter((task: { date: Date; }) => {
+      const year = task.date.getFullYear() === dueDate.getFullYear();
+      const month = task.date.getMonth() === dueDate.getMonth();
+      const day = task.date.getDay() === dueDate.getDay();
+
+      return day && month && year;
+    });
+
+    if (!result) {
+      logger.info("No tasks due tomorrow!");
+      return;
+    }
+
+    return tasks;
+  } catch (error) {
+    return error;
   }
 }
 
@@ -191,4 +215,4 @@ async function getTasks(
   }
 }
 
-export { addTask, editTask, deleteTask, taskProgress, getTasks };
+export { addTask, editTask, deleteTask, taskProgress, getTasks, getDueTasks };
