@@ -28,7 +28,7 @@
 _you will need to enter environment data in order to use the database_
 
 ```
-    mkdir .env
+    touch .env
 ```
 
 _the data in env file should look like this:_
@@ -69,7 +69,7 @@ _do this in another terminal, keep the backend one running_
 _you will need to enter environment data in order to use the websockets_
 
 ```
-    mkdir .env
+    touch .env
 ```
 
 _the data in env file should look like this:_
