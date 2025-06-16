@@ -1,18 +1,21 @@
-import { STORAGE_KEYS } from "../constants/storageKeys";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { STORAGE_KEYS } from "../constants/storageKeys";
 import { logout } from "../utils/logout";
 import { Drawer } from "../components/Drawer";
-import hamburgerImage from "../images/hamburger.png";
 import Register from "../components/Register";
 import Login from "../components/Login";
-import Board from "../components/Board";
+import hamburgerImage from "../images/hamburger.png";
 import axios from "axios";
+import Sprints from "../components/Sprints";
 import "./Home.css";
 
-function Home() {
+export default function Home() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [modal, setModal] = useState<"login" | "register" | null>(null);
   const [progress, setProgress] = useState<number>(0);
+  const [selectedSprintId, setSelectedSprintId] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   function handleAuthSuccess() {
     setModal(null);
@@ -35,7 +38,7 @@ function Home() {
         await axios.get("/api/users/me", {
           headers: { Authorization: `Bearer ${token}` }
         });
-      } catch (e) {
+      } catch {
         handleLogout();
       }
     }
@@ -43,43 +46,76 @@ function Home() {
     checkToken();
   }, []);
 
-  return (
-    <div className="home">
-      {modal === "register" && (
-        <Register
-          onSuccess={handleAuthSuccess}
-          onSwitchToLogin={() => setModal("login")}
-        />
-      )}
-      {modal === "login" && (
+  if (modal === "login") {
+    return (
+      <div className="home">
         <Login
           onSuccess={handleAuthSuccess}
           onSwitchToRegister={() => setModal("register")}
         />
-      )}
+      </div>
+    );
+  }
 
-      {!modal && (
-        <>
-          <img
-            className="hamburger"
-            src={hamburgerImage}
-            alt="hamburger"
-            onClick={() => setIsDrawerOpen(true)}
+  if (modal === "register") {
+    return (
+      <div className="home">
+        <Register
+          onSuccess={handleAuthSuccess}
+          onSwitchToLogin={() => setModal("login")}
+        />
+      </div>
+    );
+  }
+
+  if (selectedSprintId === null) {
+    return (
+      <div className="home">
+        <img
+          className="hamburger"
+          src={hamburgerImage}
+          alt="hamburger"
+          onClick={() => setIsDrawerOpen(true)}
+        />
+        <Drawer
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          onSwitchToLogin={handleLogout}
+          progress={progress}
+          setProgress={setProgress}
+          setSelectedSprintId={() => setSelectedSprintId(null)}
+          selectedSprint={false}
+        >
+          <Sprints
+            onSelectSprint={(id) => {
+              setSelectedSprintId(id);
+              navigate("/board");
+            }}
           />
+        </Drawer>
+      </div>
+    );
+  }
 
-          <Drawer
-            isOpen={isDrawerOpen}
-            onClose={() => setIsDrawerOpen(false)}
-            onSwitchToLogin={() => handleLogout()}
-            progress={progress}
-            setProgress={setProgress}
-          >
-            <Board setProgress={setProgress} />
-          </Drawer>
-        </>
-      )}
+  return (
+    <div className="home">
+      <img
+        className="hamburger"
+        src={hamburgerImage}
+        alt="hamburger"
+        onClick={() => setIsDrawerOpen(true)}
+      />
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        onSwitchToLogin={handleLogout}
+        progress={progress}
+        setProgress={setProgress}
+        setSelectedSprintId={() => setSelectedSprintId(null)}
+        selectedSprint={true}
+      >
+        <Outlet context={{ sprintId: selectedSprintId, setProgress }} />
+      </Drawer>
     </div>
   );
 }
-
-export default Home;

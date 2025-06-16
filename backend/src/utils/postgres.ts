@@ -10,6 +10,7 @@ export default async (pool: Pool) => {
 
       await pool.query(process.env.pgCreateUsersTableQuerry);
       await pool.query(process.env.pgCreateTasksTableQuerry);
+      await pool.query(process.env.pgCreateSprintsTableQuerry);
 
       const userCheck = await pool.query(
         `SELECT * FROM users WHERE email = $1`,
@@ -20,6 +21,18 @@ export default async (pool: Pool) => {
         await pool.query(
           `INSERT INTO users (email, password, is_admin) VALUES ($1, $2, $3)`,
           [process.env.pgAdminEmail, process.env.pgAdminPassword, true]
+        );
+      }
+      
+      const sprint = await pool.query(
+        `SELECT * FROM sprints WHERE author = $1`,
+        [process.env.emailSender]
+      );
+
+      if (sprint.rows.length === 0) {
+        await pool.query(
+          `INSERT INTO sprints (title, author, deleted) VALUES ($1, $2, $3)`,
+          [process.env.pgDatabase, process.env.emailSender, false]
         );
       }
 

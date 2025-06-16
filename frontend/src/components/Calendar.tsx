@@ -14,7 +14,7 @@ export default function TaskCalendar() {
 
   useEffect(() => {
     async function openDrawer() {
-      const tasks = await loadTasks("", 0);
+      const tasks = await loadTasks("", 0, 0);
       setTasks(tasks);
     }
 
@@ -27,7 +27,7 @@ export default function TaskCalendar() {
     }
 
     const handleMessage = async () => {
-      const tasks = await loadTasks("", 0);
+      const tasks = await loadTasks("", 0, 0);
       setTasks(tasks);
     };
 

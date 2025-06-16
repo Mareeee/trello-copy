@@ -4,10 +4,10 @@ import { Priority } from "../enums/Pirority";
 
 export default async function loadTasks(
   searchTerm: string,
-  priorityTerm: Priority
+  priorityTerm: Priority,
+  sprintId: number,
 ): Promise<TaskType[]> {
   try {
-    const sprintId = 0;
     const response = await axios.get(`/api/tasks/${sprintId}`, {
       params: { search: searchTerm, priority: priorityTerm }
     });

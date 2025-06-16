@@ -9,9 +9,10 @@ import "../styles/AddTask.css";
 
 type AddTaskProps = {
   onSuccess: (task: TaskType) => void;
+  sprintId: number;
 };
 
-export default function AddTask({ onSuccess }: AddTaskProps) {
+export default function AddTask({ onSuccess, sprintId }: AddTaskProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<Priority>(Priority.LOW);
@@ -26,7 +27,7 @@ export default function AddTask({ onSuccess }: AddTaskProps) {
     try {
       const task: TaskType = {
         id: 0,
-        sprintId: 0,
+        sprintId: sprintId,
         title,
         description,
         priority,

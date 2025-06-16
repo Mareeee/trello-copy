@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Task as TaskType } from "../types/Task";
+import { useOutletContext } from "react-router-dom";
 import { SearchContext } from "../contexts/SearchContext";
 import { DrawerContext } from "../contexts/DrawerContext";
 import { useWebSocket } from "../contexts/WebSocketContext";
@@ -15,17 +16,19 @@ import loadTasks from "../utils/loadTasks";
 import calculateProgress from "../utils/calculateProgress";
 import "../styles/Board.css";
 
-export default function Board({
-  setProgress
-}: {
-  setProgress: (value: number) => void;
-}) {
+type ContextType = {
+  sprintId: number;
+  setProgress: (progress: number) => void;
+};
+
+export default function Board() {
   const [columns, setColumns] = useState<Record<Status, TaskType[]>>({
     [Status.TODO]: [],
     [Status.IN_PROGRESS]: [],
     [Status.QA]: [],
     [Status.DONE]: []
   });
+  const { sprintId, setProgress } = useOutletContext<ContextType>();
   const [addTaskModal, setShowAddTaskModal] = useState<boolean>(false);
   const [editTask, setEditTask] = useState<TaskType | null>(null);
   const [deleteTask, setDeleteTask] = useState<TaskType | null>(null);
@@ -44,7 +47,11 @@ export default function Board({
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const loadedTasks: TaskType[] = await loadTasks(search, priority);
+        const loadedTasks: TaskType[] = await loadTasks(
+          search,
+          priority,
+          sprintId
+        );
         if (!loadedTasks) {
           return;
         }
@@ -68,7 +75,7 @@ export default function Board({
     };
 
     fetchTasks();
-  }, [search, priority]);
+  }, [search, priority, sprintId]);
 
   const updateProgress = async () => {
     const result = await calculateProgress(0);
@@ -140,7 +147,7 @@ export default function Board({
       {addTaskModal && (
         <div className="modal-overlay" onClick={() => showAddModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <AddTask onSuccess={handleAddNewTask} />
+            <AddTask onSuccess={handleAddNewTask} sprintId={sprintId} />
           </div>
         </div>
       )}

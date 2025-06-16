@@ -21,6 +21,8 @@ type Props = {
   onSwitchToLogin: () => void;
   progress: number;
   setProgress: React.Dispatch<React.SetStateAction<number>>;
+  setSelectedSprintId: () => void;
+  selectedSprint: boolean;
 };
 
 const Drawer = ({
@@ -30,7 +32,9 @@ const Drawer = ({
   onClose,
   onSwitchToLogin,
   progress,
-  setProgress
+  setProgress,
+  setSelectedSprintId,
+  selectedSprint
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -45,19 +49,20 @@ const Drawer = ({
 
     calculate();
   }, []);
-  
-    useEffect(() => {
-      setOpen(isOpen);
-    }, [isOpen]);
+
+  useEffect(() => {
+    setOpen(isOpen);
+  }, [isOpen]);
 
   const handleClose = () => {
     onClose();
     onSwitchToLogin();
+    setSelectedSprintId();
   };
 
   const handleCalendar = () => {
-    navigate("/calendar")
-  }
+    navigate("/calendar");
+  };
 
   return (
     <DrawerContext.Provider value={{ open, setOpen }}>
@@ -75,35 +80,46 @@ const Drawer = ({
           <div className={styles.Close} onClick={onClose}>
             <img src={closeImage} alt="close" className="close-image" />
           </div>
-          <div className={styles.Content}>
-            <div>
-              <input
-                type="text"
-                placeholder="Search..."
-                className={styles.SearchInput}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-              <select
-                value={priority}
-                onChange={(e) =>
-                  setPriority(Number(e.target.value) as Priority)
-                }
-              >
-                <option value={Priority.NONE}>Select Priority</option>
-                <option value={Priority.LOW}>Low</option>
-                <option value={Priority.MEDIUM}>Medium</option>
-                <option value={Priority.HIGH}>High</option>
-              </select>
-              <div className={styles.ProgressBar}>
-                <label>Progress:</label>
-                <ProgressBar progress={progress} />
-              </div>
-            </div>
 
+          <div className={styles.Content}>
+            {selectedSprint && (
+              <div>
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  className={styles.SearchInput}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <select
+                  value={priority}
+                  onChange={(e) =>
+                    setPriority(Number(e.target.value) as Priority)
+                  }
+                >
+                  <option value={Priority.NONE}>Select Priority</option>
+                  <option value={Priority.LOW}>Low</option>
+                  <option value={Priority.MEDIUM}>Medium</option>
+                  <option value={Priority.HIGH}>High</option>
+                </select>
+                <div className={styles.ProgressBar}>
+                  <label>Progress:</label>
+                  <ProgressBar progress={progress} />
+                </div>
+              </div>
+            )}
             <div className={styles.Options}>
-              <a className={styles.Option}>Sprint Boards</a>
-              <a className={styles.Option} onClick={handleCalendar}>Calendar</a>
+              {selectedSprint && (
+                <>
+                  <a className={styles.Option} onClick={setSelectedSprintId}>
+                    Sprint Boards
+                  </a>
+                  <a className={styles.Option} onClick={handleCalendar}>
+                    Calendar
+                  </a>
+                </>
+              )}
+
               <a className={styles.Option} onClick={handleClose}>
                 Logout
               </a>
