@@ -11,7 +11,7 @@
   border: 0.1em solid rgb(169, 169, 169);
 }
 
-button {
+.button {
   width: 100%;
   background-color: #045daa;
   color: white;
@@ -22,7 +22,7 @@ button {
   cursor: pointer;
 }
 
-button:hover {
+.button:hover {
   background-color: #456ea0;
 }
 

@@ -1,8 +1,8 @@
 import { Task as TaskType } from "../types/Task";
 import { toast } from "react-toastify";
+import { useWebSocket } from "../contexts/WebSocketContext";
 import deleteTask from "../utils/deleteTask";
 import "../styles/DeleteTask.css";
-import { useWebSocket } from "../contexts/WebSocketContext";
 
 type EditTaskProps = {
   onSuccess: (task: TaskType) => void;
@@ -50,10 +50,10 @@ export default function DeleteTask({
         </label>
 
         <div className="options">
-          <button type="button" onClick={handleCancel}>
+          <button className="button" type="button" onClick={handleCancel}>
             No
           </button>
-          <button type="submit">Yes</button>
+          <button className="button" type="submit">Yes</button>
         </div>
       </form>
     </div>
