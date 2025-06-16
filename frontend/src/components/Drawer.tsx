@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { SearchContext } from "../contexts/SearchContext";
 import { DrawerContext } from "../contexts/DrawerContext";
+import { useNavigate } from "react-router-dom";
 import { Priority } from "../enums/Pirority";
 import styles from "../styles/Drawer.module.css";
 import closeImage from "../images/close.png";
@@ -29,11 +30,12 @@ const Drawer = ({
   onClose,
   onSwitchToLogin,
   progress,
-  setProgress,
+  setProgress
 }: Props) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [priority, setPriority] = useState<Priority>(Priority.NONE);
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function calculate() {
@@ -42,16 +44,20 @@ const Drawer = ({
     }
 
     calculate();
-  }, [])
+  }, []);
+  
+    useEffect(() => {
+      setOpen(isOpen);
+    }, [isOpen]);
 
   const handleClose = () => {
     onClose();
     onSwitchToLogin();
   };
 
-  useEffect(() => {
-    setOpen(isOpen);
-  }, [isOpen]);
+  const handleCalendar = () => {
+    navigate("/calendar")
+  }
 
   return (
     <DrawerContext.Provider value={{ open, setOpen }}>
@@ -94,9 +100,10 @@ const Drawer = ({
                 <ProgressBar progress={progress} />
               </div>
             </div>
+
             <div className={styles.Options}>
               <a className={styles.Option}>Sprint Boards</a>
-              <a className={styles.Option}>Notifications</a>
+              <a className={styles.Option} onClick={handleCalendar}>Calendar</a>
               <a className={styles.Option} onClick={handleClose}>
                 Logout
               </a>

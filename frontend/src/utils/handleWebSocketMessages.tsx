@@ -16,7 +16,6 @@ export default function handleWebSocketMessages(
   socket.onmessage = (event) => {
     const message = JSON.parse(event.data);
 
-    console.log(message.type);
     if (!message.type) {
       return;
     }
