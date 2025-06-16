@@ -6,6 +6,7 @@ import Calendar from "react-calendar";
 import loadTasks from "../utils/loadTasks";
 import "react-calendar/dist/Calendar.css";
 import "../styles/TaskCalendar.css";
+import { toast } from "react-toastify";
 
 export default function TaskCalendar() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -15,6 +16,11 @@ export default function TaskCalendar() {
   useEffect(() => {
     async function openDrawer() {
       const tasks = await loadTasks("", 0);
+      if (!tasks) {
+        toast.info("Unable to fetch tasks!");
+        return;
+      }
+
       setTasks(tasks);
     }
 
