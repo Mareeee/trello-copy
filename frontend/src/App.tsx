@@ -13,10 +13,9 @@ function App() {
       <WebSocketProvider>
         <ToastContainer position="top-right" autoClose={3000} />
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route path="board" element={<Board />} />
-            <Route path="calendar" element={<TaskCalendar />} />
-          </Route>
+          <Route path="/" element={<Home />} />
+          <Route path="/board/:sprintId" element={<Board />} />
+          <Route path="/calendar" element={<TaskCalendar />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </WebSocketProvider>

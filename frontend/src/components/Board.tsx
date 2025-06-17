@@ -1,25 +1,21 @@
 import { useContext, useEffect, useState } from "react";
 import { Task as TaskType } from "../types/Task";
-import { useOutletContext } from "react-router-dom";
+import { ProgressContext } from "../contexts/ProgressContext";
 import { SearchContext } from "../contexts/SearchContext";
 import { DrawerContext } from "../contexts/DrawerContext";
 import { useWebSocket } from "../contexts/WebSocketContext";
+import { useParams } from "react-router-dom";
 import { Status } from "../enums/Status";
 import { toast } from "react-toastify";
 import handleWebSocketMessages from "../utils/handleWebSocketMessages";
-import Tasks from "../components/Tasks";
-import AddTask from "./AddTask";
-import EditTask from "./EditTask";
-import DeleteTask from "./DeleteTask";
-import plusImage from "../images/plus.png";
-import loadTasks from "../utils/loadTasks";
 import calculateProgress from "../utils/calculateProgress";
+import loadTasks from "../utils/loadTasks";
+import plusImage from "../images/plus.png";
+import Tasks from "../components/Tasks";
+import DeleteTask from "./DeleteTask";
+import EditTask from "./EditTask";
+import AddTask from "./AddTask";
 import "../styles/Board.css";
-
-type ContextType = {
-  sprintId: number;
-  setProgress: (progress: number) => void;
-};
 
 export default function Board() {
   const [columns, setColumns] = useState<Record<Status, TaskType[]>>({
@@ -28,12 +24,13 @@ export default function Board() {
     [Status.QA]: [],
     [Status.DONE]: []
   });
-  const { sprintId, setProgress } = useOutletContext<ContextType>();
   const [addTaskModal, setShowAddTaskModal] = useState<boolean>(false);
   const [editTask, setEditTask] = useState<TaskType | null>(null);
   const [deleteTask, setDeleteTask] = useState<TaskType | null>(null);
   const { search, priority } = useContext(SearchContext);
+  const { progress, setProgress } = useContext(ProgressContext);
   const { open } = useContext(DrawerContext);
+  const { sprintId } = useParams<{ sprintId: string }>();
   const socket = useWebSocket();
 
   useEffect(() => {
@@ -50,7 +47,7 @@ export default function Board() {
         const loadedTasks: TaskType[] = await loadTasks(
           search,
           priority,
-          sprintId
+          parseInt(sprintId!)
         );
         if (!loadedTasks) {
           return;
@@ -147,7 +144,10 @@ export default function Board() {
       {addTaskModal && (
         <div className="modal-overlay" onClick={() => showAddModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <AddTask onSuccess={handleAddNewTask} sprintId={sprintId} />
+            <AddTask
+              onSuccess={handleAddNewTask}
+              sprintId={parseInt(sprintId!)}
+            />
           </div>
         </div>
       )}

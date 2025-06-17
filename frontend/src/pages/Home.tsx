@@ -1,13 +1,14 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { STORAGE_KEYS } from "../constants/storageKeys";
 import { logout } from "../utils/logout";
 import { Drawer } from "../components/Drawer";
-import Register from "../components/Register";
-import Login from "../components/Login";
 import hamburgerImage from "../images/hamburger.png";
-import axios from "axios";
+import Register from "../components/Register";
 import Sprints from "../components/Sprints";
+import Login from "../components/Login";
+import Board from "../components/Board";
+import axios from "axios";
 import "./Home.css";
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
   const [progress, setProgress] = useState<number>(0);
   const [selectedSprintId, setSelectedSprintId] = useState<number | null>(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   function handleAuthSuccess() {
     setModal(null);
@@ -24,6 +26,12 @@ export default function Home() {
   const handleLogout = () => {
     logout(() => setModal("login"));
   };
+
+  useEffect(() => {
+    if (location.pathname === "/") {
+      setSelectedSprintId(null);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     async function checkToken() {
@@ -89,7 +97,7 @@ export default function Home() {
           <Sprints
             onSelectSprint={(id) => {
               setSelectedSprintId(id);
-              navigate("/board");
+              navigate(`/board/${id}`);
             }}
           />
         </Drawer>
@@ -114,7 +122,7 @@ export default function Home() {
         setSelectedSprintId={() => setSelectedSprintId(null)}
         selectedSprint={true}
       >
-        <Outlet context={{ sprintId: selectedSprintId, setProgress }} />
+        <Board/>
       </Drawer>
     </div>
   );

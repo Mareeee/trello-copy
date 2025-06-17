@@ -7,6 +7,7 @@ import styles from "../styles/Drawer.module.css";
 import closeImage from "../images/close.png";
 import ProgressBar from "./ProgressBar";
 import calculateProgress from "../utils/calculateProgress";
+import { ProgressContext } from "../contexts/ProgressContext";
 
 enum DrawerDirection {
   Left = "Left",
@@ -69,64 +70,66 @@ const Drawer = ({
       <SearchContext.Provider
         value={{ search, setSearch, priority, setPriority }}
       >
-        <div
-          className={`${styles.Drawer} ${styles[direction]} ${
-            isOpen ? styles.Open : ""
-          }`}
-        >
-          <div className={styles.UserBar}>
-            <h2>User Bar</h2>
-          </div>
-          <div className={styles.Close} onClick={onClose}>
-            <img src={closeImage} alt="close" className="close-image" />
-          </div>
+        <ProgressContext.Provider value={{ progress, setProgress }}>
+          <div
+            className={`${styles.Drawer} ${styles[direction]} ${
+              isOpen ? styles.Open : ""
+            }`}
+          >
+            <div className={styles.UserBar}>
+              <h2>User Bar</h2>
+            </div>
+            <div className={styles.Close} onClick={onClose}>
+              <img src={closeImage} alt="close" className="close-image" />
+            </div>
 
-          <div className={styles.Content}>
-            {selectedSprint && (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className={styles.SearchInput}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-                <select
-                  value={priority}
-                  onChange={(e) =>
-                    setPriority(Number(e.target.value) as Priority)
-                  }
-                >
-                  <option value={Priority.NONE}>Select Priority</option>
-                  <option value={Priority.LOW}>Low</option>
-                  <option value={Priority.MEDIUM}>Medium</option>
-                  <option value={Priority.HIGH}>High</option>
-                </select>
-                <div className={styles.ProgressBar}>
-                  <label>Progress:</label>
-                  <ProgressBar progress={progress} />
-                </div>
-              </div>
-            )}
-            <div className={styles.Options}>
+            <div className={styles.Content}>
               {selectedSprint && (
-                <>
-                  <a className={styles.Option} onClick={setSelectedSprintId}>
-                    Sprint Boards
-                  </a>
-                  <a className={styles.Option} onClick={handleCalendar}>
-                    Calendar
-                  </a>
-                </>
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className={styles.SearchInput}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  <select
+                    value={priority}
+                    onChange={(e) =>
+                      setPriority(Number(e.target.value) as Priority)
+                    }
+                  >
+                    <option value={Priority.NONE}>Select Priority</option>
+                    <option value={Priority.LOW}>Low</option>
+                    <option value={Priority.MEDIUM}>Medium</option>
+                    <option value={Priority.HIGH}>High</option>
+                  </select>
+                  <div className={styles.ProgressBar}>
+                    <label>Progress:</label>
+                    <ProgressBar progress={progress} />
+                  </div>
+                </div>
               )}
+              <div className={styles.Options}>
+                {selectedSprint && (
+                  <>
+                    <a className={styles.Option} onClick={setSelectedSprintId}>
+                      Sprint Boards
+                    </a>
+                    <a className={styles.Option} onClick={handleCalendar}>
+                      Calendar
+                    </a>
+                  </>
+                )}
 
-              <a className={styles.Option} onClick={handleClose}>
-                Logout
-              </a>
+                <a className={styles.Option} onClick={handleClose}>
+                  Logout
+                </a>
+              </div>
             </div>
           </div>
-        </div>
-        {children}
+          {children}
+        </ProgressContext.Provider>
       </SearchContext.Provider>
     </DrawerContext.Provider>
   );
